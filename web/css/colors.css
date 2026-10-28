@@ -1,0 +1,46 @@
+/*
+* Autoria: Felipe Nasser Coelho Moussa
+* RA: 25004922
+*/
+
+:root {
+  /* Marca */
+  --color-primary: #B4540C;
+  /* botões e links principais */
+  --color-primary-hover: #98460A;
+  /* botões ao passar o mouse */
+  --color-primary-soft: #FDEBDD;
+  /* fundos suaves (destaques, cards) */
+  --color-on-primary: #FFFFFF;
+  /* texto sobre a cor primária */
+
+  /* Estrutura */
+  --color-bg: #F4F6F8;
+  /* fundo da página */
+  --color-surface: #FFFFFF;
+  /* cards e formulários */
+  --color-border: #D9DFE5;
+  /* bordas e divisórias */
+  --color-header: #5B6B7A;
+  /* barra de cabeçalho (telas internas) */
+
+  /* Texto */
+  --color-text: #2B3440;
+  /* texto principal */
+  --color-text-muted: #5F6B76;
+  /* texto secundário */
+  --color-placeholder: #8c99a5;
+  /* texto de exemplo dentro dos campos */
+
+  /* Status (Painel de Status: em dia / próximo / atrasado) */
+  --color-success: #2E7D4F;
+  --color-success-soft: #E6F4EC;
+  --color-warning: #8A5A00;
+  --color-warning-soft: #FDF3DC;
+  --color-danger: #B3261E;
+  --color-danger-soft: #FDECEA;
+
+  /* Acessibilidade */
+  --color-focus: #2F6FBF;
+  /* contorno de campos e botões em foco */
+}

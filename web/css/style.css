@@ -1,0 +1,158 @@
+/*
+* Autoria: Felipe Nasser Coelho Moussa
+* RA: 25004922
+*/
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ---------- Formulários ---------- */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: var(--color-focus);
+}
+
+.field .optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.field .hint {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.field input::placeholder {
+  color: var(--color-placeholder);
+}
+
+/* ---------- Campo de senha com botão de mostrar/ocultar ---------- */
+.password-field {
+  position: relative;
+}
+
+/* espaço à direita para o texto não ficar embaixo do botão */
+.field .password-field input {
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 100%;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: var(--color-text);
+}
+
+.toggle-password:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* olho aberto = "mostrar"; olho riscado aparece quando a senha está visível */
+.toggle-password .icon-hide,
+.toggle-password.is-visible .icon-show {
+  display: none;
+}
+
+.toggle-password.is-visible .icon-hide {
+  display: block;
+}
+
+/* ---------- Botão ---------- */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Mensagem de erro ---------- */
+.alert {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border: 1px solid var(--color-danger);
+  border-radius: 6px;
+}
