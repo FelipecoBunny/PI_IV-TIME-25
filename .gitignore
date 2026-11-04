@@ -57,3 +57,11 @@ Backups.backupdb
 .MobileBackups.trash
 MobileBackups.trash
 tmbootpicker.efi
+
+# Node / segredos
+.env
+node_modules/
+.env.*
+!.env.example
+npm-debug.log*
+.github/modernize/

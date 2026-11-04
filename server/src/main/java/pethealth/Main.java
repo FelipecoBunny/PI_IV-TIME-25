@@ -2,7 +2,7 @@ package pethealth;
 
 public class Main {
 
-    public static final String PORTA_PADRAO = "3000";
+    public static final String PORTA_PADRAO = "4000";
 
     public static void main(String[] args) {
         // Ação 1: processar args (só aceita a porta)
