@@ -29,7 +29,7 @@ function showError(message) {
   errorBox.hidden = false;
 }
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", async function (event) {
   event.preventDefault();
   errorBox.hidden = true;
 
@@ -68,7 +68,33 @@ form.addEventListener("submit", function (event) {
     }
   }
 
-  // TODO (quando o backend existir): enviar os dados do pet (e a foto, se houver)
-  // e, se der certo, redirecionar para o Painel de Status.
-  console.log("Pet válido. Pronto para enviar ao backend:", { petName, species, birthDate, weight });
+  try {
+    const breed = document.getElementById("breed").value.trim();
+
+    // A requisição envia as chaves exatamente com o mesmo nome que o controller espera
+    const response = await fetch("/api/pets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: petName,
+        especie: species,
+        raca: breed,
+        dataNascimento: birthDate,
+        peso: Number(weight)
+      })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      showError(data.erro || "Erro ao cadastrar o pet.");
+      return;
+    }
+
+    // Sucesso absoluto! O dado já está no MongoDB.
+    alert("Deu certo! Pet salvo no MongoDB.");
+    // window.location.href = "painel-status.html"; // Mudar de página
+
+  } catch (error) {
+    showError("Erro de comunicação com o servidor.");
+  }
 });
