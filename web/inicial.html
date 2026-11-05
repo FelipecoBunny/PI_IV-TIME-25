@@ -1,0 +1,172 @@
+<!-- Autoria: Mateus de Souza Campos -->
+<!-- RA: 25009935 -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de saúde | PetHealth</title>
+
+  <!-- A ordem importa: cores, depois estilos globais, depois estilos desta página -->
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/inicial.css">
+</head>
+
+<body class="painel-page">
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__brand">PetHealth</div>
+      <nav aria-label="Conta">
+        <a href="login.html" class="app-header__link">Sair</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+
+    <!-- Saudação + troca de pet -->
+    <section class="painel-top" aria-labelledby="greeting">
+      <div>
+        <h1 id="greeting">Au Au, <span id="pet-name"></span>!</h1>
+        <p class="subtitle" id="today-date"></p>
+      </div>
+
+      <div class="pet-switcher">
+        <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
+        <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+          <button type="button" class="pet-avatar is-active" data-pet="" aria-pressed="true"
+            aria-label="Selecionar pet">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+          </button>
+          <button type="button" class="pet-avatar" data-pet="" aria-pressed="false"
+            aria-label="Selecionar pet">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+          </button>
+          <button type="button" class="pet-avatar" data-pet="" aria-pressed="false"
+            aria-label="Selecionar pet">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="painel-grid">
+
+      <!-- Coluna principal -->
+      <div class="painel-main">
+
+        <section class="painel-section" aria-labelledby="meds-title">
+          <h2 id="meds-title">Medicamentos</h2>
+          <div class="med-list" id="med-list">
+
+            <article class="card card--brand">
+              <div class="card__row">
+                <h3 class="card__title" data-field="nome"></h3>
+                <span class="card__time" data-field="horario"></span>
+              </div>
+              <p class="card__meta" data-field="dose"></p>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline">Ver detalhes</button>
+                <button type="button" class="btn btn--sm" data-action="mark-taken">Registrar como tomado</button>
+              </div>
+            </article>
+
+            <article class="card card--brand">
+              <div class="card__row">
+                <h3 class="card__title" data-field="nome"></h3>
+                <span class="card__time" data-field="horario"></span>
+              </div>
+              <p class="card__meta" data-field="dose"></p>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline">Ver detalhes</button>
+                <button type="button" class="btn btn--sm" data-action="mark-taken">Registrar como tomado</button>
+              </div>
+            </article>
+
+          </div>
+          <p class="empty" id="meds-empty">Nenhum medicamento para hoje.</p>
+        </section>
+
+        <section class="painel-section" aria-labelledby="today-title">
+          <h2 id="today-title">Hoje</h2>
+          <div id="today-list">
+            <article class="card card--warning">
+              <div class="card__row">
+                <h3 class="card__title" data-field="titulo"></h3>
+                <button type="button" class="btn btn--sm btn--outline">Ver detalhes</button>
+              </div>
+              <p class="card__meta" data-field="registro"></p>
+            </article>
+          </div>
+          <p class="empty" id="today-empty">Nenhum registro para hoje.</p>
+        </section>
+
+        <section class="painel-section" aria-labelledby="next-title">
+          <h2 id="next-title">Próximos 7 dias</h2>
+          <div id="next-list">
+            <article class="card card--neutral">
+              <div class="card__row">
+                <h3 class="card__title" data-field="titulo"></h3>
+                <span class="card__meta" data-field="data"></span>
+              </div>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline">Ver detalhes</button>
+                <button type="button" class="btn btn--sm">Marcar vacinação</button>
+              </div>
+            </article>
+          </div>
+          <p class="empty" id="next-empty">Não há mais nada por enquanto.</p>
+        </section>
+
+      </div>
+
+      <!-- Coluna lateral: atrasados (fica em primeiro no celular) -->
+      <aside class="painel-side" aria-labelledby="late-title">
+        <h2 id="late-title">Atrasado</h2>
+        <div id="late-list">
+          <article class="card card--danger">
+            <div class="card__row">
+              <svg class="card__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 3 1.5 21h21L12 3zm0 6 6.9 12H5.1L12 9zm-1 3v4h2v-4h-2zm0 5v2h2v-2h-2z" />
+              </svg>
+              <h3 class="card__title" data-field="titulo"></h3>
+            </div>
+            <p class="card__meta" data-field="data"></p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline">Ver detalhes</button>
+              <button type="button" class="btn btn--sm">Marcar vacinação</button>
+            </div>
+          </article>
+        </div>
+        <p class="empty" id="late-empty">Nenhum item atrasado.</p>
+      </aside>
+
+    </div>
+  </main>
+
+  <script src="js/inicial.js"></script>
+</body>
+
+</html>

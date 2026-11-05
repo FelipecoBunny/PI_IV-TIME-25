@@ -1,0 +1,300 @@
+/*
+* Autoria: Mateus de Souza Campos
+* RA: 25009935
+*/
+
+/* ---------- Cabeçalho (telas internas) ---------- */
+.app-header {
+  background: var(--color-header);
+  color: var(--color-on-primary);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 24px;
+}
+
+.app-header__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.app-header__link {
+  color: var(--color-on-primary);
+  font-size: 0.9rem;
+}
+
+.app-header__link:hover {
+  color: var(--color-on-primary);
+  text-decoration: none;
+}
+
+.app-header__link:focus-visible {
+  outline: 2px solid var(--color-on-primary);
+  outline-offset: 2px;
+}
+
+/* ---------- Estrutura da página ---------- */
+.painel {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.painel-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.painel-top h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.painel-top .subtitle {
+  margin: 4px 0 0;
+}
+
+.painel-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.painel-section {
+  margin-bottom: 24px;
+}
+
+.painel h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+/* ---------- Troca de pet ---------- */
+.pet-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pet-switcher__label {
+  font-size: 0.85rem;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+
+.pet-switcher__list {
+  display: flex;
+  gap: 8px;
+}
+
+.pet-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.pet-avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pet-avatar:hover {
+  border-color: var(--color-primary);
+}
+
+.pet-avatar.is-active {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.pet-avatar:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Cards de status ---------- */
+.med-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  border-radius: 8px;
+}
+
+.card + .card {
+  margin-top: 12px;
+}
+
+/* na grade de medicamentos o espaço vem do gap, não da margem */
+.med-list .card + .card {
+  margin-top: 0;
+}
+
+.card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card__time {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.card__meta {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.card__row > .card__meta {
+  margin: 0;
+}
+
+.card__icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+.card__row:has(.card__icon) {
+  justify-content: flex-start;
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Variações de status (usam as cores do Painel de Status) */
+.card--brand {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.card--warning {
+  background: var(--color-warning-soft);
+  border-color: var(--color-warning);
+}
+
+.card--warning .card__title {
+  color: var(--color-warning);
+}
+
+.card--danger {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+}
+
+.card--danger .card__title,
+.card--danger .card__icon {
+  color: var(--color-danger);
+}
+
+.card--neutral {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  border-left-color: var(--color-header);
+}
+
+/* Medicamento já registrado */
+.card.is-done {
+  background: var(--color-success-soft);
+  border-color: var(--color-success);
+}
+
+.card.is-done .card__time {
+  color: var(--color-success);
+}
+
+/* ---------- Botões pequenos ---------- */
+.btn--sm {
+  display: inline-block;
+  width: auto;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.btn--outline {
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+}
+
+.btn--outline:hover {
+  color: var(--color-primary-hover);
+  background: var(--color-primary-soft);
+}
+
+.btn:disabled {
+  color: var(--color-success);
+  background: transparent;
+  border: 1px solid var(--color-success);
+  cursor: default;
+}
+
+/* ---------- Estado vazio ---------- */
+.empty {
+  margin: 16px 0 0;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 760px) {
+  .painel-top {
+    flex-direction: column;
+  }
+
+  .pet-switcher__label {
+    text-align: left;
+  }
+
+  .painel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* atrasados primeiro: é o que o tutor precisa ver ao abrir o app */
+  .painel-side {
+    order: -1;
+  }
+
+  .med-list {
+    grid-template-columns: 1fr;
+  }
+}
