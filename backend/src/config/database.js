@@ -15,6 +15,7 @@ export async function connectDatabase() {
 
   database = client.db("pethealth");
   await database.command({ ping: 1 });
+  await database.collection("users").createIndex({ email: 1 }, { unique: true });
 
   console.log("MongoDB conectado com sucesso.");
   return database;

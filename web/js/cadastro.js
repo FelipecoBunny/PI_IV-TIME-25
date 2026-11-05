@@ -16,7 +16,7 @@ function showError(message) {
   errorBox.hidden = false;
 }
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", async function (event) {
   event.preventDefault();
   errorBox.hidden = true;
 
@@ -45,7 +45,24 @@ form.addEventListener("submit", function (event) {
     return;
   }
 
-  // TODO (quando o backend existir): enviar { name, email, password } e só
-  // seguir para a etapa 2 se a conta for criada (ex.: e-mail ainda não usado).
+  try {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ name: tutorName, email, password })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      showError(data.message || "Erro ao realizar o cadastro.");
+      return;
+    }
+
+    window.location.href = "cadastro-pet.html";
+  } catch (error) {
+    showError("Erro de comunicação com o servidor.");
+  }
+
   window.location.href = "cadastro-pet.html";
 });

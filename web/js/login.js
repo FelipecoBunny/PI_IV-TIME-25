@@ -11,7 +11,7 @@ function showError(message) {
   errorBox.hidden = false;
 }
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", async function (event) {
   event.preventDefault(); // impede a página de recarregar
   errorBox.hidden = true;
 
@@ -28,7 +28,24 @@ form.addEventListener("submit", function (event) {
     return;
   }
 
-  // TODO (quando o backend existir): enviar { email, password } para a rota de login
-  // e, se der certo, redirecionar para o Painel de Status.
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      showError(data.message || "Erro ao realizar login.");
+      return;
+    }
+
+    window.location.href = "cadastro-pet.html";
+  } catch (error) {
+    showError("Erro de comunicação com o servidor.");
+  }
+
   console.log("Formulário válido. Pronto para enviar ao backend:", { email });
 });
