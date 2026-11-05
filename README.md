@@ -7,7 +7,9 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 ---
 
 ## Funcionalidades Atuais
-*A implementar...*
+- Criação de contas e login
+- Registrar pets
+- Ver informações cruciais na tela inicial
 
 ---
 
@@ -20,7 +22,7 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 
 ### Backend
 - **Javascript**
-- **Typescript**
+- **Node**
 - *(adicionar bibliotecas e/ou dependências no futuro se necessário)*
 
 ### Banco de Dados
@@ -34,12 +36,12 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 ---
 
 ## Integrantes
-| Nome Completo | RA |
-| --- | --- |
-| Felipe Nasser Coelho Moussa | 25004922 |
-| Giovanni Joseppe Bozelli |  |
-| Maria Júlia Souza de Oliveira |  |
-| Mateus de Souza Campos |  |
+| Nome Completo                 | RA       |
+| ----------------------------- | -------- |
+| Felipe Nasser Coelho Moussa   | 25004922 |
+| Giovanni Joseppe Bozelli      |          |
+| Maria Júlia Souza de Oliveira |          |
+| Mateus de Souza Campos        |          |
 
 ---
 
