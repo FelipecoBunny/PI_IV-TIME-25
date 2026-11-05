@@ -3,7 +3,7 @@
 * RA: 25004922
 */
 
-/* ---------- Base ---------- */
+/* Base */
 *,
 *::before,
 *::after {
@@ -27,7 +27,7 @@ a:hover {
   color: var(--color-primary-hover);
 }
 
-/* ---------- Formulários ---------- */
+/* Formulários */
 .field {
   margin-bottom: 16px;
 }
@@ -72,12 +72,11 @@ a:hover {
   color: var(--color-placeholder);
 }
 
-/* ---------- Campo de senha com botão de mostrar/ocultar ---------- */
+/* Campo de senha */
 .password-field {
   position: relative;
 }
 
-/* espaço à direita para o texto não ficar embaixo do botão */
 .field .password-field input {
   padding-right: 44px;
 }
@@ -113,7 +112,7 @@ a:hover {
   height: 20px;
 }
 
-/* olho aberto = "mostrar"; olho riscado aparece quando a senha está visível */
+/* Botão de mostrar senha */
 .toggle-password .icon-hide,
 .toggle-password.is-visible .icon-show {
   display: none;
@@ -123,7 +122,7 @@ a:hover {
   display: block;
 }
 
-/* ---------- Botão ---------- */
+/* Botão */
 .btn {
   display: block;
   width: 100%;
@@ -146,7 +145,7 @@ a:hover {
   outline-offset: 2px;
 }
 
-/* ---------- Mensagem de erro ---------- */
+/* Mensagem de erro */
 .alert {
   margin-bottom: 16px;
   padding: 10px 12px;

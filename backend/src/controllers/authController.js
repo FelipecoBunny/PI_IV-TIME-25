@@ -1,8 +1,13 @@
+/*
+* Autoria: Felipe Nasser Coelho Moussa
+* RA: 25004922
+*/
+
 import bcrypt from "bcryptjs";
 import { ObjectId } from "mongodb";
 import { getDatabase } from "../config/database.js";
 
-// Função auxiliar mantida internamente no controlador
+// Função auxiliar (validação de e-mail)
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export const register = async (req, res) => {

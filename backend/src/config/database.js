@@ -1,3 +1,8 @@
+/*
+* Autoria: Felipe Nasser Coelho Moussa
+* RA: 25004922
+*/
+
 import { MongoClient } from "mongodb";
 
 let client;
