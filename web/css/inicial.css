@@ -3,7 +3,7 @@
 * RA: 25009935
 */
 
-/* ---------- Cabeçalho (telas internas) ---------- */
+/* Cabeçalho */
 .app-header {
   background: var(--color-header);
   color: var(--color-on-primary);
@@ -38,7 +38,7 @@
   outline-offset: 2px;
 }
 
-/* ---------- Estrutura da página ---------- */
+/* Estrutura da página */
 .painel {
   max-width: 960px;
   margin: 0 auto;
@@ -78,7 +78,7 @@
   font-size: 1.1rem;
 }
 
-/* ---------- Troca de pet ---------- */
+/* Troca de pet */
 .pet-switcher {
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@
   outline-offset: 2px;
 }
 
-/* ---------- Cards de status ---------- */
+/* Cards de status */
 .med-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -145,12 +145,11 @@
   border-radius: 8px;
 }
 
-.card + .card {
+.card+.card {
   margin-top: 12px;
 }
 
-/* na grade de medicamentos o espaço vem do gap, não da margem */
-.med-list .card + .card {
+.med-list .card+.card {
   margin-top: 0;
 }
 
@@ -179,7 +178,7 @@
   color: var(--color-text-muted);
 }
 
-.card__row > .card__meta {
+.card__row>.card__meta {
   margin: 0;
 }
 
@@ -200,7 +199,7 @@
   margin-top: 12px;
 }
 
-/* Variações de status (usam as cores do Painel de Status) */
+/* Variações de status */
 .card--brand {
   background: var(--color-primary-soft);
   border-color: var(--color-primary);
@@ -241,7 +240,7 @@
   color: var(--color-success);
 }
 
-/* ---------- Botões pequenos ---------- */
+/* Botões */
 .btn--sm {
   display: inline-block;
   width: auto;
@@ -267,7 +266,7 @@
   cursor: default;
 }
 
-/* ---------- Estado vazio ---------- */
+/* Vazio */
 .empty {
   margin: 16px 0 0;
   font-size: 0.9rem;
@@ -275,7 +274,6 @@
   color: var(--color-text-muted);
 }
 
-/* ---------- Telas menores ---------- */
 @media (max-width: 760px) {
   .painel-top {
     flex-direction: column;
@@ -289,7 +287,6 @@
     grid-template-columns: 1fr;
   }
 
-  /* atrasados primeiro: é o que o tutor precisa ver ao abrir o app */
   .painel-side {
     order: -1;
   }

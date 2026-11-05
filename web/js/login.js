@@ -12,7 +12,7 @@ function showError(message) {
 }
 
 form.addEventListener("submit", async function (event) {
-  event.preventDefault(); // impede a página de recarregar
+  event.preventDefault();
   errorBox.hidden = true;
 
   const email = form.email.value.trim();
@@ -42,7 +42,21 @@ form.addEventListener("submit", async function (event) {
       return;
     }
 
-    window.location.href = "cadastro-pet.html";
+    // Quantos pets
+    const petsResponse = await fetch("/api/pets");
+
+    if (petsResponse.ok) {
+      const pets = await petsResponse.json();
+
+      if (pets.length > 0) {
+        window.location.href = "inicial.html";
+      } else {
+        window.location.href = "cadastro-pet.html";
+      }
+    } else {
+      window.location.href = "cadastro-pet.html";
+    }
+
   } catch (error) {
     showError("Erro de comunicação com o servidor.");
   }

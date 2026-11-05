@@ -14,14 +14,13 @@ const photoInput = document.getElementById("photo");
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024; // 2 MB
 
-// Data de hoje no formato AAAA-MM-DD (hora local, não UTC)
+// Data de hoje
 const now = new Date();
 const today =
   now.getFullYear() + "-" +
   String(now.getMonth() + 1).padStart(2, "0") + "-" +
   String(now.getDate()).padStart(2, "0");
 
-// O calendário já não deixa escolher uma data futura
 birthInput.max = today;
 
 function showError(message) {
@@ -43,7 +42,6 @@ form.addEventListener("submit", async function (event) {
     return;
   }
 
-  // Datas no formato AAAA-MM-DD podem ser comparadas como texto
   if (birthDate > today) {
     showError("A data de nascimento não pode estar no futuro.");
     return;
@@ -71,7 +69,6 @@ form.addEventListener("submit", async function (event) {
   try {
     const breed = document.getElementById("breed").value.trim();
 
-    // A requisição envia as chaves exatamente com o mesmo nome que o controller espera
     const response = await fetch("/api/pets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -90,9 +87,8 @@ form.addEventListener("submit", async function (event) {
       return;
     }
 
-    // Sucesso absoluto! O dado já está no MongoDB.
-    alert("Deu certo! Pet salvo no MongoDB.");
-    // window.location.href = "painel-status.html"; // Mudar de página
+    // Redireciona para o painel após o cadastro
+    window.location.href = "inicial.html";
 
   } catch (error) {
     showError("Erro de comunicação com o servidor.");
