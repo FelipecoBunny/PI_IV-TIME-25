@@ -1,3 +1,7 @@
+/*
+Autoria: Felipe Nasser Coelho Moussa
+RA: 25004922
+ */
 package pethealth.rede;
 
 import java.net.ServerSocket;

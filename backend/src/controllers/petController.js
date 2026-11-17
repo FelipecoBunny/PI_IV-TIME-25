@@ -5,7 +5,7 @@
 
 import { ObjectId } from "mongodb";
 import { getDatabase } from "../config/database.js";
-import { calcularPainel } from '../services/dashboardService.js';
+import { calcularPainelNoJava } from "../services/javaServerClient.js";
 
 export const cadastrarPet = async (req, res) => {
   try {
@@ -87,15 +87,27 @@ export const getDashboard = async (req, res) => {
       db.collection("medicationLogs").find({ petId }).toArray()
     ]);
 
-    // Calcula a data de hoje (Fuso de SP - Mudar depois para o fuso do usuário se necessário)
-    const dataSP = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
-    const hojeStr = dataSP.toISOString().split('T')[0];
+    // Data de hoje no fuso de São Paulo no formato YYYY-MM-DD
+    const hojeStr = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo"
+    }).format(new Date());
 
-    const painel = calcularPainel({ pet, vaccines, medications, medicationLogs, consultations, hojeStr });
+    const painel = await calcularPainelNoJava({
+      pet,
+      vaccines,
+      medications,
+      medicationLogs,
+      consultations,
+      hojeStr
+    });
+
     res.json(painel);
 
   } catch (error) {
     console.error("Erro no dashboard:", error);
+    if (error.code === "ECONNREFUSED") {
+      return res.status(503).json({ message: "Servidor Java de cálculo indisponível na porta 4000." });
+    }
     res.status(500).json({ message: "Erro ao gerar dashboard." });
   }
 };
