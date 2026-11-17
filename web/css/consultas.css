@@ -1,0 +1,340 @@
+/*
+* Autoria: Mateus de Souza Campos
+* RA: 25009935
+*/
+
+/* ---------- Cabeçalho e navegação ---------- */
+.app-header__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-on-primary);
+  text-decoration: none;
+}
+
+.app-header__brand:hover {
+  color: var(--color-on-primary);
+}
+
+.app-header__brand:focus-visible,
+.app-header__link:focus-visible {
+  outline: 2px solid var(--color-on-primary);
+  outline-offset: 2px;
+}
+
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-header__link {
+  padding: 4px 0;
+  color: var(--color-on-primary);
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.app-header__link:hover {
+  color: var(--color-on-primary);
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+/* página atual */
+.app-header__link[aria-current="page"] {
+  font-weight: 700;
+  border-bottom-color: var(--color-on-primary);
+}
+
+/* ---------- Mensagem de erro (só aparece com MOSTRAR_ERROS = true) ---------- */
+
+.error-text {
+  margin: 0 0 12px;
+  color: var(--color-danger);
+}
+
+/* ---------- Título e contador ---------- */
+.since {
+  margin: 4px 0 12px;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.since strong {
+  color: var(--color-text);
+}
+
+/* Botão escuro "Marcar consulta" (usa a cor do cabeçalho) */
+.btn--dark {
+  background: var(--color-header);
+}
+
+.btn--dark:hover {
+  background: var(--color-text);
+}
+
+/* Botões ainda sem função: neutros (o verde do inicial.css indica "tomado") */
+.consultas-page .btn:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  cursor: not-allowed;
+}
+
+/* ---------- Busca e filtro ---------- */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-bar__field {
+  position: relative;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.search-bar__field .search-bar__input {
+  width: 100%;
+  padding-left: 36px;
+}
+
+.search-bar__icon {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.btn--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn--icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.search-bar__input {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.search-bar__input::placeholder {
+  color: var(--color-placeholder);
+}
+
+.search-bar__input:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: var(--color-focus);
+}
+
+.filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.filter-panel[hidden] {
+  display: none;
+}
+
+.filter-panel__field {
+  flex: 1 1 140px;
+}
+
+.filter-panel__field label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.filter-panel__field .search-bar__input {
+  width: 100%;
+}
+
+/* ---------- Lista de consultas ---------- */
+.consulta-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.consulta-list .card + .card {
+  margin-top: 0;
+}
+
+/* botões alinhados à direita, como no protótipo */
+.consulta-card .card__actions {
+  justify-content: flex-end;
+}
+
+.consulta-info {
+  margin: 8px 0 0;
+}
+
+.consulta-info div {
+  font-size: 0.85rem;
+}
+
+/* rótulo e valor na mesma linha; texto longo continua embaixo dele sem quebrar o rótulo */
+.consulta-info dt,
+.consulta-info dd {
+  display: inline;
+  margin: 0;
+}
+
+.consulta-info dt {
+  font-weight: 600;
+}
+
+.consulta-info dd {
+  color: var(--color-text-muted);
+}
+
+/* Card "Hoje": ícone de relógio + etiqueta */
+.card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-warning);
+}
+
+.card--warning .card__icon {
+  color: var(--color-warning);
+}
+
+/* Ícone de calendário nos cards neutros */
+.card--neutral .card__icon {
+  color: var(--color-header);
+}
+
+/* ---------- Acessibilidade ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 760px) {
+  .consulta-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Documentos da consulta ---------- */
+.doc-dialog {
+  width: calc(100% - 32px);
+  max-width: 480px;
+  padding: 24px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--color-primary);
+  border-radius: 8px;
+}
+
+.doc-dialog::backdrop {
+  background: rgba(43, 52, 64, 0.5);
+}
+
+.doc-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.doc-dialog h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.doc-dialog .subtitle {
+  margin: 4px 0 16px;
+}
+
+.doc-list {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.doc-item a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.doc-item__type {
+  flex: none;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.doc-upload label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.doc-upload input[type="file"] {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.doc-upload .hint {
+  margin: 4px 0 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,258 @@
+<!-- Autoria: Mateus de Souza Campos -->
+<!-- RA: 25009935 -->
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultas médicas | PetHealth</title>
+
+  <!-- A ordem importa: cores, estilos globais, cabeçalho/cards (inicial) e por fim esta página -->
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/inicial.css">
+  <link rel="stylesheet" href="css/consultas.css">
+</head>
+
+<body class="painel-page consultas-page">
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <nav aria-label="Principal">
+        <ul class="app-nav">
+          <li><a href="inicial.html" class="app-header__link">Início</a></li>
+          <li><a href="consultas.html" class="app-header__link" aria-current="page">Consultas</a></li>
+          <li><a href="login.html" class="app-header__link">Sair</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+
+    <!-- Mensagens de estado -->
+    <div id="loading-state" class="empty">Buscando consultas do pet...</div>
+
+    <div id="error-state" class="empty" hidden>
+      <p class="error-text">Ocorreu um erro ao carregar as consultas.</p>
+      <button type="button" class="btn btn--outline btn--sm" id="retry-btn">Tentar novamente</button>
+    </div>
+
+    <!-- Conteúdo da tela -->
+    <div id="consultas-content" hidden>
+
+      <section class="painel-top" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">Consultas médicas</h1>
+          <p class="subtitle" id="pet-subtitle"></p>
+          <p class="since" id="since"></p>
+          <button type="button" class="btn btn--sm btn--dark" id="schedule-btn" disabled>Marcar consulta</button>
+        </div>
+
+        <div class="pet-switcher" id="pet-switcher-container">
+          <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
+          <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+            <button type="button" class="pet-avatar is-active" aria-pressed="true" aria-label="Selecionar pet">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+            </button>
+            <button type="button" class="pet-avatar" aria-pressed="false" aria-label="Selecionar pet">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+            </button>
+            <button type="button" class="pet-avatar" aria-pressed="false" aria-label="Selecionar pet">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+            </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="painel-grid">
+
+        <!-- Coluna principal: histórico -->
+        <div class="painel-main">
+          <section class="painel-section" aria-labelledby="history-title">
+            <h2 id="history-title">Últimas consultas</h2>
+
+            <form class="search-bar" id="search-form" role="search">
+              <div class="search-bar__field">
+                <label for="search-input" class="visually-hidden">Buscar consultas</label>
+                <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg>
+                <input type="search" id="search-input" class="search-bar__input" placeholder="Buscar consultas"
+                  autocomplete="off">
+              </div>
+              <button type="submit" class="btn btn--sm">Buscar</button>
+              <button type="button" class="btn btn--sm btn--outline btn--icon" id="filter-toggle" aria-expanded="false"
+                aria-controls="filter-panel">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z" />
+                </svg>
+                Filtrar
+              </button>
+            </form>
+
+            <div class="filter-panel" id="filter-panel" hidden>
+              <div class="filter-panel__field">
+                <label for="date-from">De</label>
+                <input type="date" id="date-from" class="search-bar__input">
+              </div>
+              <div class="filter-panel__field">
+                <label for="date-to">Até</label>
+                <input type="date" id="date-to" class="search-bar__input">
+              </div>
+              <button type="button" class="btn btn--sm btn--outline" id="filter-clear">Limpar</button>
+            </div>
+
+            <div class="consulta-list" id="consulta-list">
+
+            <article class="card card--brand consulta-card" data-date="">
+              <h3 class="card__title">Consulta</h3>
+              <dl class="consulta-info">
+                <div><dt>Data:</dt> <dd></dd></div>
+                <div><dt>Local:</dt> <dd></dd></div>
+                <div><dt>Médico responsável:</dt> <dd></dd></div>
+              </dl>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
+              </div>
+            </article>
+
+            <article class="card card--brand consulta-card" data-date="">
+              <h3 class="card__title">Consulta</h3>
+              <dl class="consulta-info">
+                <div><dt>Data:</dt> <dd></dd></div>
+                <div><dt>Local:</dt> <dd></dd></div>
+                <div><dt>Médico responsável:</dt> <dd></dd></div>
+              </dl>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
+              </div>
+            </article>
+
+            <article class="card card--brand consulta-card" data-date="">
+              <h3 class="card__title">Consulta</h3>
+              <dl class="consulta-info">
+                <div><dt>Data:</dt> <dd></dd></div>
+                <div><dt>Local:</dt> <dd></dd></div>
+                <div><dt>Médico responsável:</dt> <dd></dd></div>
+              </dl>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
+              </div>
+            </article>
+
+            <article class="card card--brand consulta-card" data-date="">
+              <h3 class="card__title">Consulta</h3>
+              <dl class="consulta-info">
+                <div><dt>Data:</dt> <dd></dd></div>
+                <div><dt>Local:</dt> <dd></dd></div>
+                <div><dt>Médico responsável:</dt> <dd></dd></div>
+              </dl>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
+              </div>
+            </article>
+          </div>
+            <p class="empty" id="consultas-empty" aria-live="polite">Nenhuma consulta registrada.</p>
+          </section>
+        </div>
+
+        <!-- Coluna lateral: próximas consultas (fica em primeiro no celular) -->
+        <aside class="painel-side" aria-labelledby="next-title">
+          <h2 id="next-title">Próximas consultas</h2>
+          <div id="next-list">
+          <article class="card card--warning">
+            <div class="card__row">
+              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+              <div class="card__main">
+                <span class="card__label">Hoje</span>
+                <h3 class="card__title"></h3>
+                <p class="card__meta">Data: </p>
+              </div>
+              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
+            </div>
+          </article>
+
+          <article class="card card--neutral">
+            <div class="card__row">
+              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
+              <h3 class="card__title"></h3>
+            </div>
+            <p class="card__meta">Data esperada: </p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
+              <button type="button" class="btn btn--sm" disabled>Marcar consulta</button>
+            </div>
+          </article>
+
+          <article class="card card--neutral">
+            <div class="card__row">
+              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
+              <h3 class="card__title"></h3>
+            </div>
+            <p class="card__meta">Data esperada: </p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
+              <button type="button" class="btn btn--sm" disabled>Marcar consulta</button>
+            </div>
+          </article>
+        </div>
+        <p class="empty" id="next-empty">Nenhuma consulta agendada.</p>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Documentos da consulta (receitas, exames, fotos) -->
+  <dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
+    <div class="doc-dialog__head">
+      <h2 id="doc-title">Documentos</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="doc-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="doc-subtitle"></p>
+
+    <p class="empty" id="doc-status" aria-live="polite" hidden></p>
+    <ul class="doc-list" id="doc-list"></ul>
+
+    <form class="doc-upload" id="doc-form" novalidate>
+      <div id="doc-error" class="alert" role="alert" hidden></div>
+      <label for="doc-file">Anexar receitas, exames ou fotos</label>
+      <input type="file" id="doc-file" name="arquivos" accept=".pdf,image/*" multiple>
+      <p class="hint">PDF ou imagem, até 10 MB por arquivo.</p>
+      <button type="submit" class="btn btn--sm" id="doc-submit">Enviar</button>
+    </form>
+  </dialog>
+
+  <script src="js/consultas.js"></script>
+</body>
+
+</html>
