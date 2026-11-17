@@ -1,7 +1,12 @@
+/*
+Autoria: Felipe Nasser Coelho Moussa
+RA: 25004922
+ */
 package pethealth;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
 import pethealth.protocolo.ComunicadoDeDesligamento;
 import pethealth.rede.AceitadoraDeConexao;
 import pethealth.rede.Parceiro;

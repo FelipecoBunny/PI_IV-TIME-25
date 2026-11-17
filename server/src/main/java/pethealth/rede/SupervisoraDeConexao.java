@@ -1,3 +1,7 @@
+/*
+Autoria: Felipe Nasser Coelho Moussa
+RA: 25004922
+ */
 package pethealth.rede;
 
 import java.io.BufferedReader;
@@ -7,9 +11,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
 import pethealth.protocolo.Comunicado;
+import pethealth.protocolo.PedidoCalcularPainel;
 import pethealth.protocolo.PedidoParaSair;
 import pethealth.protocolo.RespostaErro;
+import pethealth.protocolo.ResultadoPainel;
+import pethealth.servico.CalculadoraPainelService;
 
 public class SupervisoraDeConexao extends Thread {
 
@@ -74,13 +82,19 @@ public class SupervisoraDeConexao extends Thread {
                     return;
                 }
 
-                if (comunicado instanceof PedidoParaSair) {
+                if (comunicado instanceof PedidoCalcularPainel pedido) {
+                    try {
+                        ResultadoPainel resultado = CalculadoraPainelService.calcularPainel(pedido);
+                        this.usuario.receba(resultado);
+                    } catch (Exception erro) {
+                        this.usuario.receba(new RespostaErro("Erro ao calcular painel: " + erro.getMessage()));
+                    }
+                } else if (comunicado instanceof PedidoParaSair) {
                     removerUsuarioEDesconectar();
                     return;
+                } else {
+                    this.usuario.receba(new RespostaErro("Operacao nao suportada: " + comunicado.getTipo()));
                 }
-
-                // Etapa 3: despachar os pedidos de negocio do PetHealth aqui
-                this.usuario.receba(new RespostaErro("Operacao nao suportada: " + comunicado.getTipo()));
             }
         } catch (Exception erro) {
             try {

@@ -1,20 +1,28 @@
+/*
+Autoria: Felipe Nasser Coelho Moussa
+RA: 25004922
+ */
 package pethealth.protocolo;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class SerializadorComunicado {
 
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
     private static final Map<String, Class<? extends Comunicado>> REGISTRO = new HashMap<>();
 
     static {
         registrar(ComunicadoDeDesligamento.TIPO, ComunicadoDeDesligamento.class);
         registrar(PedidoParaSair.TIPO, PedidoParaSair.class);
         registrar(RespostaErro.TIPO, RespostaErro.class);
+        registrar(PedidoCalcularPainel.TIPO, PedidoCalcularPainel.class);
+        registrar(ResultadoPainel.TIPO, ResultadoPainel.class);
     }
 
     public static void registrar(String tipo, Class<? extends Comunicado> classe) {
