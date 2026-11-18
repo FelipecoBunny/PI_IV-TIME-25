@@ -13,7 +13,8 @@ const router = express.Router();
 // Limite de requisições para login (5 tentativas a cada 15 minutos)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 20,
+  skipSuccessfulRequests: true,
   message: { message: "Muitas tentativas de login. Tente novamente mais tarde." }
 });
 

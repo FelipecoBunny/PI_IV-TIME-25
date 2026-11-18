@@ -63,6 +63,4 @@ form.addEventListener("submit", async function (event) {
   } catch (error) {
     showError("Erro de comunicação com o servidor.");
   }
-
-  window.location.href = "cadastro-pet.html";
 });

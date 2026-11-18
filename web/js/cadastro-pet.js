@@ -83,9 +83,10 @@ form.addEventListener("submit", async function (event) {
 
     if (!response.ok) {
       const data = await response.json();
-      showError(data.erro || "Erro ao cadastrar o pet.");
+      showError(data.message || "Erro ao cadastrar o pet.");
       return;
     }
+
 
     // Redireciona para o painel após o cadastro
     window.location.href = "inicial.html";

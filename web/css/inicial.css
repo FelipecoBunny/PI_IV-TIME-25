@@ -260,10 +260,10 @@
 }
 
 .btn:disabled {
-  color: var(--color-success);
-  background: transparent;
-  border: 1px solid var(--color-success);
-  cursor: default;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  cursor: not-allowed;
 }
 
 /* Vazio */

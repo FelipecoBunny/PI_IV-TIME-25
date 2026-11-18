@@ -58,7 +58,7 @@ public class SupervisoraDeConexao extends Thread {
             try {
                 transmissor.close();
             } catch (Exception falha) {
-                // ignora falha no fechamento
+                // Ignora falha no fechamento
             }
             return;
         }
@@ -100,7 +100,7 @@ public class SupervisoraDeConexao extends Thread {
             try {
                 removerUsuarioEDesconectar();
             } catch (Exception falha) {
-                // ignora falha no encerramento
+                // Ignora falha no encerramento
             }
         }
     }

@@ -34,7 +34,7 @@ public class Main {
             aceitadoraDeConexao = new AceitadoraDeConexao(porta, usuarios);
             aceitadoraDeConexao.start();
         } catch (Exception erro) {
-            System.err.println("Escolha uma porta apropriada e liberada para uso!");
+            System.err.println("Escolha uma porta apropriada e liberada para uso.");
             return;
         }
 
@@ -42,7 +42,7 @@ public class Main {
 
         try (Scanner teclado = new Scanner(System.in)) {
             for (;;) {
-                System.out.println("O servidor esta ativo! Para desativa-lo, use o comando \"desativar\"\n");
+                System.out.println("O servidor esta ativo. Para desativa-lo, use o comando \"desativar\"\n");
                 System.out.print("> ");
 
                 if (!teclado.hasNextLine()) {
@@ -59,15 +59,15 @@ public class Main {
                                 usuario.receba(comunicadoDeDesligamento);
                                 usuario.adeus();
                             } catch (Exception erro) {
-                                // ignora cliente ja desconectado
+                                // Ignora cliente já desconectado
                             }
                         }
                     }
 
-                    System.out.println("O servidor foi desativado!");
+                    System.out.println("O servidor está desativado.");
                     System.exit(0);
                 } else {
-                    System.err.println("Comando invalido!");
+                    System.err.println("Comando invalido. Use \"desativar\" para desativar o servidor.");
                 }
             }
         }

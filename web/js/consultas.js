@@ -8,11 +8,7 @@ const calendarSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" str
 
 const clockSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>`;
 
-// Enquanto não há backend, deixe false: se a API falhar, a tela aparece vazia, sem mensagem de erro.
-// Com o backend pronto, mude para true para mostrar "Ocorreu um erro ao carregar as consultas".
-const MOSTRAR_ERROS = false;
-
-// ---------- Elementos ----------
+// Elementos
 const loadingState = document.getElementById('loading-state');
 const errorState = document.getElementById('error-state');
 const content = document.getElementById('consultas-content');
@@ -36,22 +32,17 @@ const dateFrom = document.getElementById('date-from');
 const dateTo = document.getElementById('date-to');
 const filterClear = document.getElementById('filter-clear');
 
-// ---------- Utilidades ----------
-// Evita que texto vindo do banco seja interpretado como HTML
+// Utilidades
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[ch]));
 }
-
-// "2026-11-04" (ou "2026-11-04T10:00:00Z") -> "04/11/2026"
 function formatData(dataISO) {
   if (!dataISO) return '';
   const [y, m, d] = String(dataISO).slice(0, 10).split('-');
   return `${d}/${m}/${y}`;
 }
-
-// remove acentos e maiúsculas para a busca não depender deles
 function normalize(text) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -71,19 +62,17 @@ async function fetchAPI(endpoint) {
 // Falha ao falar com a API
 function falhaAoCarregar() {
   loadingState.hidden = true;
-
-  if (MOSTRAR_ERROS) {
-    content.hidden = true;
-    errorState.hidden = false;
-    return;
-  }
-
-  // Sem backend: mostra a tela vazia (cards em branco e mensagens de "nenhuma consulta")
-  content.hidden = false;
+  content.hidden = true;
+  errorState.hidden = false;
 }
 
-// ---------- Renderização ----------
+// Renderização
+let consultasCache = new Map();
 function renderizarConsultas(data) {
+  consultasCache = new Map();
+  data.historico.forEach((c) => consultasCache.set(String(c._id), { ...c, status: 'realizada' }));
+  data.proximas.forEach((c) => consultasCache.set(String(c._id), { ...c, motivo: c.titulo, status: 'agendada' }));
+
   petSubtitle.textContent = `Histórico de ${data.pet.nome}`;
 
   // Contador de dias
@@ -99,47 +88,55 @@ function renderizarConsultas(data) {
     <article class="card card--brand consulta-card" data-id="${esc(c._id)}" data-date="${esc(String(c.data || '').slice(0, 10))}">
       <h3 class="card__title">${esc(c.motivo || 'Consulta')}</h3>
       <dl class="consulta-info">
-        <div><dt>Data:</dt><dd>${esc(formatData(c.data))}</dd></div>
-        <div><dt>Local:</dt><dd>${esc(c.local)}</dd></div>
-        <div><dt>Médico responsável:</dt><dd>${esc(c.medico)}</dd></div>
+        <div><dt>Data:</dt> <dd>${esc(formatData(c.data))}</dd></div>
+        <div><dt>Local:</dt> <dd>${esc(c.local)}</dd></div>
+        <div><dt>Médico responsável:</dt> <dd>${esc(c.medico)}</dd></div>
+        ${c.diagnostico ? `<div><dt>Diagnóstico:</dt> <dd>${esc(c.diagnostico)}</dd></div>` : ''}
+        ${c.observacoes ? `<div><dt>Observações:</dt> <dd>${esc(c.observacoes)}</dd></div>` : ''}
       </dl>
       <div class="card__actions">
         <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
-        <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
+        <button type="button" class="btn btn--sm" data-action="detalhes" data-id="${esc(c._id)}">Ver detalhes</button>
       </div>
     </article>`).join('');
 
-  // Próximas consultas (a de hoje fica em destaque)
+
+  // Próximas consultas (a de hoje fica em destaque, mas com a mesma estrutura dos demais)
   const hoje = new Date().toLocaleDateString('en-CA'); // AAAA-MM-DD
   nextList.innerHTML = data.proximas.map((c) => {
-    const ehHoje = String(c.data || '').slice(0, 10) === hoje;
+    const dataISO = String(c.data || '').slice(0, 10);
+    const ehHoje = dataISO === hoje;
     if (ehHoje) {
       return `
-    <article class="card card--warning">
+    <article class="card card--warning" data-id="${esc(c._id)}" data-date="${esc(dataISO)}">
       <div class="card__row">
         ${clockSvg}
         <div class="card__main">
           <span class="card__label">Hoje</span>
           <h3 class="card__title">${esc(c.titulo)}</h3>
-          <p class="card__meta">Data: ${esc(formatData(c.data))}</p>
         </div>
-        <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
+      </div>
+      <p class="card__meta">Data: ${esc(formatData(c.data))}</p>
+      <div class="card__actions">
+        <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+        <button type="button" class="btn btn--sm" data-action="detalhes" data-id="${esc(c._id)}">Ver detalhes</button>
       </div>
     </article>`;
     }
     return `
-    <article class="card card--neutral">
+    <article class="card card--neutral" data-id="${esc(c._id)}" data-date="${esc(dataISO)}">
       <div class="card__row">
         ${calendarSvg}
         <h3 class="card__title">${esc(c.titulo)}</h3>
       </div>
       <p class="card__meta">Data esperada: ${esc(formatData(c.data))}</p>
       <div class="card__actions">
-        <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-        <button type="button" class="btn btn--sm" disabled>Marcar consulta</button>
+        <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
+        <button type="button" class="btn btn--sm" data-action="detalhes" data-id="${esc(c._id)}">Ver detalhes</button>
       </div>
     </article>`;
   }).join('');
+
 
   nextEmpty.hidden = data.proximas.length > 0;
 
@@ -150,7 +147,7 @@ function renderizarConsultas(data) {
   applyFilters();
 }
 
-// ---------- Busca e filtro por data ----------
+// Busca e filtro por data
 function applyFilters() {
   const cards = consultaList.querySelectorAll('.consulta-card');
   const query = normalize(searchInput.value.trim());
@@ -197,7 +194,7 @@ filterClear.addEventListener('click', () => {
   applyFilters();
 });
 
-// ---------- Documentos da consulta ----------
+// Documentos da consulta
 const docDialog = document.getElementById('doc-dialog');
 const docSubtitle = document.getElementById('doc-subtitle');
 const docStatus = document.getElementById('doc-status');
@@ -219,7 +216,7 @@ function showDocError(message) {
   docError.hidden = false;
 }
 
-// só deixa abrir links do próprio site ou http(s)
+// só deixa abrir links do próprio site ou com https
 function safeUrl(url) {
   return /^(\/|https?:\/\/)/.test(String(url)) ? url : '#';
 }
@@ -250,13 +247,13 @@ async function carregarDocumentos() {
   }
 }
 
-// botão "Documentos" de cada card (os cards são criados pelo JS, por isso delegação)
-consultaList.addEventListener('click', (event) => {
+// botão Documentos
+document.addEventListener('click', (event) => {
   const btn = event.target.closest('[data-action="documentos"]');
   if (!btn) return;
 
-  const card = btn.closest('.consulta-card');
-  if (!card.dataset.id) return; // card em branco (ainda sem dados do banco)
+  const card = btn.closest('[data-id]');
+  if (!card || !card.dataset.id) return;
   currentConsultaId = card.dataset.id;
 
   const titulo = card.querySelector('.card__title').textContent;
@@ -329,7 +326,258 @@ docForm.addEventListener('submit', async (event) => {
   }
 });
 
-// ---------- Carregamento ----------
+// Marcar consulta
+const scheduleBtn = document.getElementById('schedule-btn');
+const scheduleDialog = document.getElementById('schedule-dialog');
+const scheduleClose = document.getElementById('schedule-close');
+const scheduleForm = document.getElementById('schedule-form');
+const scheduleError = document.getElementById('schedule-error');
+const scheduleSubmit = document.getElementById('schedule-submit');
+const consultaDataInput = document.getElementById('consulta-data');
+const consultaHorarioInput = document.getElementById('consulta-horario');
+const realizadaFields = document.getElementById('realizada-fields');
+
+function getEm24Horas() {
+  const futuro = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const data = futuro.toLocaleDateString('en-CA'); // AAAA-MM-DD
+  const horario = futuro.toTimeString().slice(0, 5); // HH:MM
+  return { data, horario };
+}
+
+function atualizarCamposRealizada() {
+  const agora = new Date();
+  const hojeStr = agora.toLocaleDateString('en-CA');
+  const horaStr = agora.toTimeString().slice(0, 5);
+  const d = consultaDataInput.value;
+  const h = consultaHorarioInput.value || '00:00';
+  const ehPassadoOuAgora = Boolean(d) && (d < hojeStr || (d === hojeStr && h <= horaStr));
+  realizadaFields.hidden = !ehPassadoOuAgora;
+}
+
+function abrirModalConsulta({ motivo = '', data = '', horario = '' } = {}) {
+  scheduleError.hidden = true;
+  scheduleForm.reset();
+
+  const padrao24h = getEm24Horas();
+  document.getElementById('consulta-motivo').value = motivo;
+  consultaDataInput.value = data || padrao24h.data;
+  consultaHorarioInput.value = horario || padrao24h.horario;
+
+  atualizarCamposRealizada();
+  scheduleDialog.showModal();
+}
+
+consultaDataInput.addEventListener('change', atualizarCamposRealizada);
+consultaHorarioInput.addEventListener('change', atualizarCamposRealizada);
+
+scheduleBtn.addEventListener('click', () => abrirModalConsulta());
+scheduleClose.addEventListener('click', () => scheduleDialog.close());
+
+scheduleDialog.addEventListener('click', (event) => {
+  if (event.target === scheduleDialog) scheduleDialog.close();
+});
+
+nextList.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-action="agendar-card"]');
+  if (!btn) return;
+  abrirModalConsulta({
+    motivo: btn.dataset.titulo,
+    data: btn.dataset.data,
+    horario: btn.dataset.horario
+  });
+});
+
+scheduleForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  scheduleError.hidden = true;
+
+  const petId = sessionStorage.getItem('activePetId');
+  const payload = {
+    motivo: document.getElementById('consulta-motivo').value.trim(),
+    data: consultaDataInput.value,
+    horario: consultaHorarioInput.value,
+    local: document.getElementById('consulta-local').value.trim(),
+    veterinario: document.getElementById('consulta-vet').value.trim(),
+    diagnostico: document.getElementById('consulta-diagnostico').value.trim(),
+    observacoes: document.getElementById('consulta-obs').value.trim()
+  };
+
+  scheduleSubmit.disabled = true;
+  try {
+    const response = await fetch(`/api/pets/${petId}/consultas`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload)
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      scheduleError.textContent = resData.message || 'Erro ao salvar consulta.';
+      scheduleError.hidden = false;
+      return;
+    }
+
+    scheduleDialog.close();
+    await carregarConsultasDoPet(petId);
+  } catch {
+    scheduleError.textContent = 'Erro de comunicação com o servidor.';
+    scheduleError.hidden = false;
+  } finally {
+    scheduleSubmit.disabled = false;
+  }
+});
+
+// Detalhes da consulta
+const detailDialog = document.getElementById('detail-dialog');
+const detailClose = document.getElementById('detail-close');
+const detailForm = document.getElementById('detail-form');
+const detailError = document.getElementById('detail-error');
+const detailStatusLabel = document.getElementById('detail-status-label');
+const detailDataInput = document.getElementById('detail-data');
+const detailHorarioInput = document.getElementById('detail-horario');
+const detailRealizadaFields = document.getElementById('detail-realizada-fields');
+const detailSaveBtn = document.getElementById('detail-save');
+const detailDeleteBtn = document.getElementById('detail-delete');
+
+let editingConsultaId = null;
+
+function atualizarCamposDetalhesRealizada() {
+  const agora = new Date();
+  const hojeStr = agora.toLocaleDateString('en-CA');
+  const horaStr = agora.toTimeString().slice(0, 5);
+  const d = detailDataInput.value;
+  const h = detailHorarioInput.value || '00:00';
+  const ehPassadoOuAgora = Boolean(d) && (d < hojeStr || (d === hojeStr && h <= horaStr));
+  detailRealizadaFields.hidden = !ehPassadoOuAgora;
+  detailStatusLabel.textContent = ehPassadoOuAgora
+    ? 'Status: Consulta realizada'
+    : 'Status: Consulta agendada';
+}
+
+function abrirDetalhesConsulta(consultaId) {
+  const item = consultasCache.get(String(consultaId));
+  if (!item) return;
+
+  editingConsultaId = String(consultaId);
+  detailError.hidden = true;
+  detailForm.reset();
+
+  document.getElementById('detail-motivo').value = item.motivo || '';
+  detailDataInput.value = String(item.data || '').slice(0, 10);
+  detailHorarioInput.value = String(item.horario || '').slice(0, 5);
+  document.getElementById('detail-local').value = item.local || '';
+  document.getElementById('detail-vet').value = item.medico || '';
+  document.getElementById('detail-diagnostico').value = item.diagnostico || '';
+  document.getElementById('detail-obs').value = item.observacoes || '';
+
+  atualizarCamposDetalhesRealizada();
+  detailDialog.showModal();
+}
+
+detailDataInput.addEventListener('change', atualizarCamposDetalhesRealizada);
+detailHorarioInput.addEventListener('change', atualizarCamposDetalhesRealizada);
+
+detailClose.addEventListener('click', () => detailDialog.close());
+detailDialog.addEventListener('click', (event) => {
+  if (event.target === detailDialog) detailDialog.close();
+});
+
+document.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-action="detalhes"]');
+  if (!btn) return;
+  abrirDetalhesConsulta(btn.dataset.id);
+});
+
+detailForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!editingConsultaId) return;
+  detailError.hidden = true;
+
+  const petId = sessionStorage.getItem('activePetId');
+  const payload = {
+    motivo: document.getElementById('detail-motivo').value.trim(),
+    data: detailDataInput.value,
+    horario: detailHorarioInput.value,
+    local: document.getElementById('detail-local').value.trim(),
+    veterinario: document.getElementById('detail-vet').value.trim(),
+    diagnostico: document.getElementById('detail-diagnostico').value.trim(),
+    observacoes: document.getElementById('detail-obs').value.trim(),
+  };
+
+  detailSaveBtn.disabled = true;
+  try {
+    const response = await fetch(`/api/pets/${petId}/consultas/${editingConsultaId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      detailError.textContent = resData.message || 'Erro ao atualizar consulta.';
+      detailError.hidden = false;
+      return;
+    }
+
+    detailDialog.close();
+    await carregarConsultasDoPet(petId);
+  } catch {
+    detailError.textContent = 'Erro de comunicação com o servidor.';
+    detailError.hidden = false;
+  } finally {
+    detailSaveBtn.disabled = false;
+  }
+});
+
+detailDeleteBtn.addEventListener('click', async () => {
+  if (!editingConsultaId) return;
+  if (!window.confirm('Deseja realmente excluir esta consulta?')) return;
+
+  detailError.hidden = true;
+  const petId = sessionStorage.getItem('activePetId');
+  detailDeleteBtn.disabled = true;
+
+  try {
+    const response = await fetch(`/api/pets/${petId}/consultas/${editingConsultaId}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      detailError.textContent = resData.message || 'Erro ao excluir consulta.';
+      detailError.hidden = false;
+      return;
+    }
+
+    detailDialog.close();
+    await carregarConsultasDoPet(petId);
+  } catch {
+    detailError.textContent = 'Erro de comunicação com o servidor.';
+    detailError.hidden = false;
+  } finally {
+    detailDeleteBtn.disabled = false;
+  }
+});
+
+// Carregamento
 async function carregarConsultasDoPet(petId) {
   loadingState.hidden = false;
   errorState.hidden = true;
@@ -355,7 +603,7 @@ async function inicializarAplicacao() {
       return;
     }
 
-    // Seletor só aparece com mais de um pet
+    // Seletor de pets
     petSwitcherContainer.style.display = pets.length === 1 ? 'none' : 'flex';
     petListEl.innerHTML = '';
 
