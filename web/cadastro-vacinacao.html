@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadastro de vacinação</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root {
+  --color-primary: #B4540C;
+  --color-primary-hover: #98460A;
+  --color-primary-soft: #FDEBDD;
+  --color-on-primary: #FFFFFF;
+  --color-bg: #F4F6F8;
+  --color-surface: #FFFFFF;
+  --color-border: #D9DFE5;
+  --color-header: #5B6B7A;
+  --color-text: #2B3440;
+  --color-text-muted: #5F6B76;
+  --color-placeholder: #6B7783;
+  --color-success: #2E7D4F;
+  --color-success-soft: #E6F4EC;
+  --color-warning: #8A5A00;
+  --color-warning-soft: #FDF3DC;
+  --color-danger: #B3261E;
+  --color-danger-soft: #FDECEA;
+  --color-focus: #2F6FBF;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #F0A064; --color-primary-hover: #F5B280; --color-primary-soft: #3A2616; --color-on-primary: #2A1604;
+    --color-bg: #14181D; --color-surface: #1D232A; --color-border: #36404A; --color-header: #36424E;
+    --color-text: #E8ECF0; --color-text-muted: #A5B0BA; --color-placeholder: #8C99A5;
+    --color-success: #6CC48F; --color-success-soft: #17301F; --color-warning: #E8B84F; --color-warning-soft: #33270E;
+    --color-danger: #F2877F; --color-danger-soft: #3A1B19; --color-focus: #7DB2F0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-primary: #F0A064; --color-primary-hover: #F5B280; --color-primary-soft: #3A2616; --color-on-primary: #2A1604;
+  --color-bg: #14181D; --color-surface: #1D232A; --color-border: #36404A; --color-header: #36424E;
+  --color-text: #E8ECF0; --color-text-muted: #A5B0BA; --color-placeholder: #8C99A5;
+  --color-success: #6CC48F; --color-success-soft: #17301F; --color-warning: #E8B84F; --color-warning-soft: #33270E;
+  --color-danger: #F2877F; --color-danger-soft: #3A1B19; --color-focus: #7DB2F0; color-scheme: dark;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font: 400 16px/1.5 "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.bar { background: var(--color-header); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+.bar b { font-size: 1.1rem; }
+.bar span { opacity: .9; font-size: .9rem; }
+.bar .mark { width: 28px; height: 28px; border-radius: 6px; background: var(--color-primary-soft); color: var(--color-primary); display: grid; place-items: center; font-weight: 700; }
+main { max-width: 1040px; margin: 0 auto; padding: 28px 20px 56px; }
+h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 6px; }
+.lead { color: var(--color-text-muted); margin: 0 0 24px; max-width: 62ch; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .side { order: -1; position: static !important; } }
+fieldset { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 20px; margin: 0 0 20px; min-width: 0; }
+legend { font-weight: 700; font-size: 1.05rem; padding: 0 8px; margin-left: -8px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.full { grid-column: 1 / -1; }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+label { display: block; font-weight: 700; font-size: .92rem; margin-bottom: 6px; }
+label small { font-weight: 400; color: var(--color-text-muted); }
+input, select, textarea { width: 100%; font: inherit; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--color-text-muted); border-radius: 6px; padding: 10px 12px; min-height: 44px; }
+textarea { min-height: 88px; resize: vertical; }
+input::placeholder, textarea::placeholder { color: var(--color-placeholder); }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.invalid { border-color: var(--color-danger); background: var(--color-danger-soft); }
+.err { color: var(--color-danger); font-size: .85rem; margin-top: 4px; min-height: 0; }
+.hint { color: var(--color-text-muted); font-size: .85rem; margin-top: 4px; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+button { font: inherit; font-weight: 700; min-height: 46px; padding: 0 22px; border-radius: 6px; cursor: pointer; }
+.primary { background: var(--color-primary); color: var(--color-on-primary); border: 1px solid var(--color-primary); }
+.primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+.ghost { background: transparent; color: var(--color-text); border: 1px solid var(--color-border); }
+.ghost:hover { background: var(--color-primary-soft); }
+.side { position: sticky; top: 16px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; }
+.side h2 { font-size: 1rem; margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--color-border); }
+.status { padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; }
+.dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 6px; flex: none; }
+.status strong { display: block; }
+.status p { margin: 2px 0 0; font-size: .9rem; }
+.s-none { background: var(--color-bg); } .s-none .dot { background: var(--color-text-muted); }
+.s-ok { background: var(--color-success-soft); color: var(--color-success); } .s-ok .dot { background: var(--color-success); }
+.s-soon { background: var(--color-warning-soft); color: var(--color-warning); } .s-soon .dot { background: var(--color-warning); }
+.s-late { background: var(--color-danger-soft); color: var(--color-danger); } .s-late .dot { background: var(--color-danger); }
+dl { margin: 0; padding: 14px 18px 18px; font-size: .9rem; }
+dt { color: var(--color-text-muted); }
+dd { margin: 0 0 10px; font-weight: 700; overflow-wrap: anywhere; }
+.done { display: none; background: var(--color-success-soft); color: var(--color-success); border: 1px solid var(--color-success); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; font-weight: 700; }
+.done.show { display: block; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="mark" aria-hidden="true">+</div>
+  <div><b>Caderneta de vacinação</b> <span>· Registro de doses</span></div>
+</header>
+
+<main>
+  <h1>Cadastro de vacinação</h1>
+  <p class="lead">Registre a dose aplicada. Os campos marcados como opcionais podem ficar em branco.</p>
+
+  <div class="done" id="done" role="status" tabindex="-1"></div>
+
+  <div class="layout">
+    <form id="form" novalidate>
+      <fieldset>
+        <legend>Paciente</legend>
+        <div class="grid">
+          <div class="full">
+            <label for="nome">Nome completo</label>
+            <input id="nome" name="nome" autocomplete="name" placeholder="Ex.: Maria da Silva Souza" required>
+            <div class="err" data-for="nome"></div>
+          </div>
+          <div>
+            <label for="cpf">CPF</label>
+            <input id="cpf" name="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00" required>
+            <div class="err" data-for="cpf"></div>
+          </div>
+          <div>
+            <label for="nasc">Data de nascimento</label>
+            <input id="nasc" name="nasc" type="date" required>
+            <div class="err" data-for="nasc"></div>
+          </div>
+          <div class="full">
+            <label for="sus">Cartão SUS <small>(opcional)</small></label>
+            <input id="sus" name="sus" inputmode="numeric" maxlength="15" placeholder="15 dígitos">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Vacina aplicada</legend>
+        <div class="grid">
+          <div>
+            <label for="vacina">Vacina</label>
+            <select id="vacina" name="vacina" required>
+              <option value="">Selecione</option>
+              <option>BCG</option><option>Hepatite B</option><option>Pentavalente</option>
+              <option>Poliomielite (VIP/VOP)</option><option>Rotavírus</option><option>Pneumocócica</option>
+              <option>Meningocócica C</option><option>Febre amarela</option><option>Tríplice viral</option>
+              <option>Influenza</option><option>Covid-19</option><option>HPV</option><option>dTpa</option><option>Outra</option>
+            </select>
+            <div class="err" data-for="vacina"></div>
+          </div>
+          <div>
+            <label for="dose">Dose</label>
+            <select id="dose" name="dose" required>
+              <option value="">Selecione</option>
+              <option>1ª dose</option><option>2ª dose</option><option>3ª dose</option><option>Reforço</option><option>Dose única</option>
+            </select>
+            <div class="err" data-for="dose"></div>
+          </div>
+          <div>
+            <label for="lote">Lote</label>
+            <input id="lote" name="lote" placeholder="Ex.: 23AB45" required>
+            <div class="err" data-for="lote"></div>
+          </div>
+          <div>
+            <label for="fab">Fabricante <small>(opcional)</small></label>
+            <input id="fab" name="fab" placeholder="Ex.: Butantan">
+          </div>
+          <div>
+            <label for="data">Data da aplicação</label>
+            <input id="data" name="data" type="date" required>
+            <div class="err" data-for="data"></div>
+          </div>
+          <div>
+            <label for="prox">Próxima dose <small>(opcional)</small></label>
+            <input id="prox" name="prox" type="date">
+            <div class="hint">Atualiza o painel de status ao lado.</div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Local e responsável</legend>
+        <div class="grid">
+          <div>
+            <label for="unidade">Unidade de saúde</label>
+            <input id="unidade" name="unidade" placeholder="Ex.: UBS Centro" required>
+            <div class="err" data-for="unidade"></div>
+          </div>
+          <div>
+            <label for="prof">Profissional responsável</label>
+            <input id="prof" name="prof" placeholder="Nome e registro (COREN/CRM)" required>
+            <div class="err" data-for="prof"></div>
+          </div>
+          <div class="full">
+            <label for="obs">Observações <small>(opcional)</small></label>
+            <textarea id="obs" name="obs" placeholder="Reações, contraindicações ou outras informações"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button class="primary" type="submit">Salvar registro</button>
+        <button class="ghost" type="reset" id="limpar">Limpar campos</button>
+      </div>
+    </form>
+
+    <aside class="side" aria-label="Resumo do registro">
+      <h2>Painel de status</h2>
+      <div class="status s-none" id="status" aria-live="polite">
+        <span class="dot"></span>
+        <div><strong id="st-title">Sem próxima dose</strong><p id="st-text">Informe a data da próxima dose para ver a situação.</p></div>
+      </div>
+      <dl>
+        <dt>Paciente</dt><dd id="r-nome">—</dd>
+        <dt>Vacina</dt><dd id="r-vacina">—</dd>
+        <dt>Aplicada em</dt><dd id="r-data">—</dd>
+      </dl>
+    </aside>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const form = $('form');
+const fmt = v => { if (!v) return '—'; const [y, m, d] = v.split('-'); return d + '/' + m + '/' + y; };
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+$('data').max = iso(today); $('nasc').max = iso(today);
+
+$('cpf').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+  v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  e.target.value = v;
+});
+$('sus').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 15); });
+
+function cpfValido(c) {
+  c = c.replace(/\D/g, '');
+  if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false;
+  for (let t = 9; t < 11; t++) {
+    let s = 0; for (let i = 0; i < t; i++) s += +c[i] * (t + 1 - i);
+    if (((s * 10) % 11) % 10 !== +c[t]) return false;
+  }
+  return true;
+}
+
+function status() {
+  const v = $('prox').value, box = $('status');
+  let cls = 's-none', t = 'Sem próxima dose', x = 'Informe a data da próxima dose para ver a situação.';
+  if (v) {
+    const [y, m, d] = v.split('-').map(Number);
+    const dias = Math.round((new Date(y, m - 1, d) - today) / 864e5);
+    if (dias < 0) { cls = 's-late'; t = 'Atrasada'; x = 'A dose venceu há ' + Math.abs(dias) + (Math.abs(dias) === 1 ? ' dia.' : ' dias.'); }
+    else if (dias <= 30) { cls = 's-soon'; t = 'Próxima'; x = dias === 0 ? 'A dose é hoje.' : 'A dose é em ' + dias + (dias === 1 ? ' dia.' : ' dias.'); }
+    else { cls = 's-ok'; t = 'Em dia'; x = 'Próxima dose em ' + fmt(v) + '.'; }
+  }
+  box.className = 'status ' + cls; $('st-title').textContent = t; $('st-text').textContent = x;
+}
+function resumo() {
+  $('r-nome').textContent = $('nome').value.trim() || '—';
+  $('r-vacina').textContent = ($('vacina').value ? $('vacina').value + (($('dose').value) ? ', ' + $('dose').value : '') : '—');
+  $('r-data').textContent = fmt($('data').value);
+}
+['nome', 'vacina', 'dose', 'data'].forEach(i => $(i).addEventListener('input', resumo));
+$('prox').addEventListener('input', status);
+
+const msgs = { nome: 'Informe o nome completo.', cpf: 'Informe um CPF válido.', nasc: 'Informe a data de nascimento.', vacina: 'Selecione a vacina.', dose: 'Selecione a dose.', lote: 'Informe o lote.', data: 'Informe a data da aplicação.', unidade: 'Informe a unidade de saúde.', prof: 'Informe o profissional responsável.' };
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  let first = null;
+  Object.keys(msgs).forEach(id => {
+    const el = $(id), ok = id === 'cpf' ? cpfValido(el.value) : el.value.trim() !== '';
+    el.classList.toggle('invalid', !ok);
+    el.setAttribute('aria-invalid', String(!ok));
+    document.querySelector('[data-for="' + id + '"]').textContent = ok ? '' : msgs[id];
+    if (!ok && !first) first = el;
+  });
+  const done = $('done');
+  if (first) { done.classList.remove('show'); first.focus(); return; }
+  done.textContent = 'Registro salvo: ' + $('vacina').value + ' (' + $('dose').value + ') para ' + $('nome').value.trim() + '.';
+  done.classList.add('show'); done.focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+$('limpar').addEventListener('click', () => setTimeout(() => {
+  document.querySelectorAll('.err').forEach(n => n.textContent = '');
+  document.querySelectorAll('.invalid').forEach(n => n.classList.remove('invalid'));
+  $('done').classList.remove('show'); resumo(); status();
+}));
+</script>
+</body>
+</html>
