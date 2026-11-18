@@ -22,11 +22,11 @@ public class AceitadoraDeConexao extends Thread {
         try {
             this.pedido = new ServerSocket(Integer.parseInt(porta));
         } catch (Exception erro) {
-            throw new Exception("Porta invalida", erro);
+            throw new Exception("Porta inválida", erro);
         }
 
         if (usuarios == null) {
-            throw new Exception("Usuarios ausentes");
+            throw new Exception("Usuários ausentes");
         }
 
         this.usuarios = usuarios;
@@ -46,7 +46,7 @@ public class AceitadoraDeConexao extends Thread {
                 SupervisoraDeConexao supervisora = new SupervisoraDeConexao(conexao, this.usuarios);
                 supervisora.start();
             } catch (Exception erro) {
-                // ignora falha pontual na criacao da supervisora
+                // Ignora falha pontual na criação da supervisora
             }
         }
     }
@@ -56,7 +56,7 @@ public class AceitadoraDeConexao extends Thread {
         try {
             this.pedido.close();
         } catch (Exception erro) {
-            // ignora falha ao fechar o ServerSocket
+            // Ignora falha ao fechar o ServerSocket
         }
     }
 }

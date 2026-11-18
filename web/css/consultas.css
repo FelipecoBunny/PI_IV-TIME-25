@@ -3,7 +3,7 @@
 * RA: 25009935
 */
 
-/* ---------- Cabeçalho e navegação ---------- */
+/* Cabeçalho e navegação */
 .app-header__brand {
   font-size: 1.25rem;
   font-weight: 700;
@@ -49,14 +49,14 @@
   border-bottom-color: var(--color-on-primary);
 }
 
-/* ---------- Mensagem de erro (só aparece com MOSTRAR_ERROS = true) ---------- */
+/* Mensagem de erro */
 
 .error-text {
   margin: 0 0 12px;
   color: var(--color-danger);
 }
 
-/* ---------- Título e contador ---------- */
+/* Título e contador */
 .since {
   margin: 4px 0 12px;
   font-size: 1.1rem;
@@ -77,7 +77,7 @@
   background: var(--color-text);
 }
 
-/* Botões ainda sem função: neutros (o verde do inicial.css indica "tomado") */
+/* Botão desabilitado */
 .consultas-page .btn:disabled {
   color: var(--color-text-muted);
   background: var(--color-surface);
@@ -85,7 +85,7 @@
   cursor: not-allowed;
 }
 
-/* ---------- Busca e filtro ---------- */
+/* Busca e filtro */
 .search-bar {
   display: flex;
   flex-wrap: wrap;
@@ -178,20 +178,27 @@
   width: 100%;
 }
 
-/* ---------- Lista de consultas ---------- */
+/* Lista de consultas */
 .consulta-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.consulta-list .card + .card {
+.consulta-list .card+.card {
   margin-top: 0;
 }
 
-/* botões alinhados à direita, como no protótipo */
+.consulta-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* botões alinhados à direita e sempre na parte de baixo do card */
 .consulta-card .card__actions {
   justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .consulta-info {
@@ -241,7 +248,7 @@
   color: var(--color-header);
 }
 
-/* ---------- Acessibilidade ---------- */
+/* Acessibilidade */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -254,14 +261,14 @@
   border: 0;
 }
 
-/* ---------- Telas menores ---------- */
+/* Telas menores */
 @media (max-width: 760px) {
   .consulta-list {
     grid-template-columns: 1fr;
   }
 }
 
-/* ---------- Documentos da consulta ---------- */
+/* Documentos da consulta */
 .doc-dialog {
   width: calc(100% - 32px);
   max-width: 480px;

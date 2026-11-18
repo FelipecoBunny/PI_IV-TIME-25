@@ -10,7 +10,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Consultas médicas | PetHealth</title>
 
-  <!-- A ordem importa: cores, estilos globais, cabeçalho/cards (inicial) e por fim esta página -->
   <link rel="stylesheet" href="css/colors.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/inicial.css">
@@ -26,8 +25,9 @@
         <ul class="app-nav">
           <li><a href="inicial.html" class="app-header__link">Início</a></li>
           <li><a href="consultas.html" class="app-header__link" aria-current="page">Consultas</a></li>
-          <li><a href="login.html" class="app-header__link">Sair</a></li>
+          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
         </ul>
+
       </nav>
     </div>
   </header>
@@ -50,39 +50,13 @@
           <h1 id="page-title">Consultas médicas</h1>
           <p class="subtitle" id="pet-subtitle"></p>
           <p class="since" id="since"></p>
-          <button type="button" class="btn btn--sm btn--dark" id="schedule-btn" disabled>Marcar consulta</button>
+          <button type="button" class="btn btn--sm btn--dark" id="schedule-btn">Marcar consulta</button>
+
         </div>
 
         <div class="pet-switcher" id="pet-switcher-container">
           <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
           <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
-            <button type="button" class="pet-avatar is-active" aria-pressed="true" aria-label="Selecionar pet">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
-              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
-              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
-            </svg>
-            </button>
-            <button type="button" class="pet-avatar" aria-pressed="false" aria-label="Selecionar pet">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
-              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
-              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
-            </svg>
-            </button>
-            <button type="button" class="pet-avatar" aria-pressed="false" aria-label="Selecionar pet">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <ellipse cx="6" cy="10" rx="2" ry="2.8" />
-              <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
-              <ellipse cx="18" cy="10" rx="2" ry="2.8" />
-              <path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
-            </svg>
-            </button>
           </div>
         </div>
       </section>
@@ -127,112 +101,136 @@
               <button type="button" class="btn btn--sm btn--outline" id="filter-clear">Limpar</button>
             </div>
 
-            <div class="consulta-list" id="consulta-list">
+            <div class="consulta-list" id="consulta-list"></div>
+            <p class="empty" id="consultas-empty" aria-live="polite" hidden>Nenhuma consulta registrada.</p>
 
-            <article class="card card--brand consulta-card" data-date="">
-              <h3 class="card__title">Consulta</h3>
-              <dl class="consulta-info">
-                <div><dt>Data:</dt> <dd></dd></div>
-                <div><dt>Local:</dt> <dd></dd></div>
-                <div><dt>Médico responsável:</dt> <dd></dd></div>
-              </dl>
-              <div class="card__actions">
-                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
-                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
-              </div>
-            </article>
-
-            <article class="card card--brand consulta-card" data-date="">
-              <h3 class="card__title">Consulta</h3>
-              <dl class="consulta-info">
-                <div><dt>Data:</dt> <dd></dd></div>
-                <div><dt>Local:</dt> <dd></dd></div>
-                <div><dt>Médico responsável:</dt> <dd></dd></div>
-              </dl>
-              <div class="card__actions">
-                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
-                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
-              </div>
-            </article>
-
-            <article class="card card--brand consulta-card" data-date="">
-              <h3 class="card__title">Consulta</h3>
-              <dl class="consulta-info">
-                <div><dt>Data:</dt> <dd></dd></div>
-                <div><dt>Local:</dt> <dd></dd></div>
-                <div><dt>Médico responsável:</dt> <dd></dd></div>
-              </dl>
-              <div class="card__actions">
-                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
-                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
-              </div>
-            </article>
-
-            <article class="card card--brand consulta-card" data-date="">
-              <h3 class="card__title">Consulta</h3>
-              <dl class="consulta-info">
-                <div><dt>Data:</dt> <dd></dd></div>
-                <div><dt>Local:</dt> <dd></dd></div>
-                <div><dt>Médico responsável:</dt> <dd></dd></div>
-              </dl>
-              <div class="card__actions">
-                <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
-                <button type="button" class="btn btn--sm" disabled>Ver detalhes</button>
-              </div>
-            </article>
-          </div>
-            <p class="empty" id="consultas-empty" aria-live="polite">Nenhuma consulta registrada.</p>
           </section>
         </div>
 
-        <!-- Coluna lateral: próximas consultas (fica em primeiro no celular) -->
+        <!-- Coluna lateral: próximas consultas -->
         <aside class="painel-side" aria-labelledby="next-title">
           <h2 id="next-title">Próximas consultas</h2>
-          <div id="next-list">
-          <article class="card card--warning">
-            <div class="card__row">
-              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-              <div class="card__main">
-                <span class="card__label">Hoje</span>
-                <h3 class="card__title"></h3>
-                <p class="card__meta">Data: </p>
-              </div>
-              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-            </div>
-          </article>
-
-          <article class="card card--neutral">
-            <div class="card__row">
-              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
-              <h3 class="card__title"></h3>
-            </div>
-            <p class="card__meta">Data esperada: </p>
-            <div class="card__actions">
-              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-              <button type="button" class="btn btn--sm" disabled>Marcar consulta</button>
-            </div>
-          </article>
-
-          <article class="card card--neutral">
-            <div class="card__row">
-              <svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
-              <h3 class="card__title"></h3>
-            </div>
-            <p class="card__meta">Data esperada: </p>
-            <div class="card__actions">
-              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-              <button type="button" class="btn btn--sm" disabled>Marcar consulta</button>
-            </div>
-          </article>
-        </div>
-        <p class="empty" id="next-empty">Nenhuma consulta agendada.</p>
+          <div id="next-list"></div>
+          <p class="empty" id="next-empty" hidden>Nenhuma consulta agendada.</p>
         </aside>
+
 
       </div>
     </div>
   </main>
 
-  <!-- Documentos da consulta (receitas, exames, fotos) -->
+  <!-- Detalhes e edição da consulta -->
+  <dialog class="doc-dialog" id="detail-dialog" aria-labelledby="detail-title">
+    <div class="doc-dialog__head">
+      <h2 id="detail-title">Detalhes da consulta</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="detail-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="detail-status-label"></p>
+
+    <form id="detail-form" novalidate>
+      <div id="detail-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="detail-motivo">Motivo</label>
+        <input type="text" id="detail-motivo" name="motivo" maxlength="120" required>
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel__field">
+          <label for="detail-data">Data</label>
+          <input type="date" id="detail-data" name="data" class="search-bar__input" required>
+        </div>
+        <div class="filter-panel__field">
+          <label for="detail-horario">Horário</label>
+          <input type="time" id="detail-horario" name="horario" class="search-bar__input" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="detail-local">Clínica / Local</label>
+        <input type="text" id="detail-local" name="local" maxlength="150" required>
+      </div>
+
+      <div class="field">
+        <label for="detail-vet">Médico veterinário</label>
+        <input type="text" id="detail-vet" name="veterinario" maxlength="100" required>
+      </div>
+
+      <div id="detail-realizada-fields" hidden>
+        <div class="field">
+          <label for="detail-diagnostico">Diagnóstico <span class="optional">(opcional)</span></label>
+          <input type="text" id="detail-diagnostico" name="diagnostico" maxlength="200">
+        </div>
+        <div class="field">
+          <label for="detail-obs">Observações <span class="optional">(opcional)</span></label>
+          <input type="text" id="detail-obs" name="observacoes" maxlength="500">
+        </div>
+      </div>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm" id="detail-save">Salvar alterações</button>
+        <button type="button" class="btn btn--sm btn--outline" id="detail-delete">Excluir consulta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Marcar consulta -->
+  <dialog class="doc-dialog" id="schedule-dialog" aria-labelledby="schedule-title">
+    <div class="doc-dialog__head">
+      <h2 id="schedule-title">Marcar consulta</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="schedule-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="schedule-subtitle">Preencha os dados da consulta do pet.</p>
+
+    <form id="schedule-form" novalidate>
+      <div id="schedule-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="consulta-motivo">Motivo</label>
+        <input type="text" id="consulta-motivo" name="motivo" placeholder="Ex.: Check-up anual" maxlength="120"
+          required>
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel__field">
+          <label for="consulta-data">Data</label>
+          <input type="date" id="consulta-data" name="data" class="search-bar__input" required>
+        </div>
+        <div class="filter-panel__field">
+          <label for="consulta-horario">Horário</label>
+          <input type="time" id="consulta-horario" name="horario" class="search-bar__input" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="consulta-local">Clínica / Local</label>
+        <input type="text" id="consulta-local" name="local" placeholder="Ex.: Clínica VetVida — Av. Brasil, 1420"
+          maxlength="150" required>
+      </div>
+
+      <div class="field">
+        <label for="consulta-vet">Médico veterinário</label>
+        <input type="text" id="consulta-vet" name="veterinario" placeholder="Ex.: Dra. Camila Nogueira" maxlength="100"
+          required>
+      </div>
+
+      <div id="realizada-fields" hidden>
+        <div class="field">
+          <label for="consulta-diagnostico">Diagnóstico <span class="optional">(opcional)</span></label>
+          <input type="text" id="consulta-diagnostico" name="diagnostico" placeholder="Ex.: Saudável" maxlength="200">
+        </div>
+        <div class="field">
+          <label for="consulta-obs">Observações <span class="optional">(opcional)</span></label>
+          <input type="text" id="consulta-obs" name="observacoes" placeholder="Ex.: Retorno em 12 meses"
+            maxlength="500">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--sm" id="schedule-submit">Salvar consulta</button>
+    </form>
+  </dialog>
+
+  <!-- Documentos da consulta -->
   <dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
     <div class="doc-dialog__head">
       <h2 id="doc-title">Documentos</h2>
@@ -252,6 +250,7 @@
     </form>
   </dialog>
 
+  <script src="js/logout.js"></script>
   <script src="js/consultas.js"></script>
 </body>
 

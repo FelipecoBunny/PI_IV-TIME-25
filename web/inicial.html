@@ -12,18 +12,25 @@
   <link rel="stylesheet" href="css/colors.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/inicial.css">
+  <link rel="stylesheet" href="css/consultas.css">
+
 </head>
 
 <body class="painel-page">
 
   <header class="app-header">
     <div class="app-header__inner">
-      <div class="app-header__brand">PetHealth</div>
-      <nav aria-label="Conta">
-        <a href="login.html" class="app-header__link">Sair</a>
+      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <nav aria-label="Principal">
+        <ul class="app-nav">
+          <li><a href="inicial.html" class="app-header__link" aria-current="page">Início</a></li>
+          <li><a href="consultas.html" class="app-header__link">Consultas</a></li>
+          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
+        </ul>
       </nav>
     </div>
   </header>
+
 
   <main class="painel">
 
@@ -86,7 +93,85 @@
     </div>
   </main>
 
+  <!-- Detalhes da consulta -->
+  <dialog class="doc-dialog" id="detail-dialog" aria-labelledby="detail-title">
+    <div class="doc-dialog__head">
+      <h2 id="detail-title">Detalhes da consulta</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="detail-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="detail-status-label"></p>
+
+    <form id="detail-form" novalidate>
+      <div id="detail-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="detail-motivo">Motivo</label>
+        <input type="text" id="detail-motivo" name="motivo" maxlength="120" required>
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-panel__field">
+          <label for="detail-data">Data</label>
+          <input type="date" id="detail-data" name="data" class="search-bar__input" required>
+        </div>
+        <div class="filter-panel__field">
+          <label for="detail-horario">Horário</label>
+          <input type="time" id="detail-horario" name="horario" class="search-bar__input" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="detail-local">Clínica / Local</label>
+        <input type="text" id="detail-local" name="local" maxlength="150" required>
+      </div>
+
+      <div class="field">
+        <label for="detail-vet">Médico veterinário</label>
+        <input type="text" id="detail-vet" name="veterinario" maxlength="100" required>
+      </div>
+
+      <div id="detail-realizada-fields" hidden>
+        <div class="field">
+          <label for="detail-diagnostico">Diagnóstico <span class="optional">(opcional)</span></label>
+          <input type="text" id="detail-diagnostico" name="diagnostico" maxlength="200">
+        </div>
+        <div class="field">
+          <label for="detail-obs">Observações <span class="optional">(opcional)</span></label>
+          <input type="text" id="detail-obs" name="observacoes" maxlength="500">
+        </div>
+      </div>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm" id="detail-save">Salvar alterações</button>
+        <button type="button" class="btn btn--sm btn--outline" id="detail-delete">Excluir consulta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Documentos da consulta (receitas, exames, fotos) -->
+  <dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
+    <div class="doc-dialog__head">
+      <h2 id="doc-title">Documentos</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="doc-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="doc-subtitle"></p>
+
+    <p class="empty" id="doc-status" aria-live="polite" hidden></p>
+    <ul class="doc-list" id="doc-list"></ul>
+
+    <form class="doc-upload" id="doc-form" novalidate>
+      <div id="doc-error" class="alert" role="alert" hidden></div>
+      <label for="doc-file">Anexar receitas, exames ou fotos</label>
+      <input type="file" id="doc-file" name="arquivos" accept=".pdf,image/*" multiple>
+      <p class="hint">PDF ou imagem, até 10 MB por arquivo.</p>
+      <button type="submit" class="btn btn--sm" id="doc-submit">Enviar</button>
+    </form>
+  </dialog>
+
+
+  <script src="js/logout.js"></script>
   <script src="js/inicial.js"></script>
 </body>
+
 
 </html>
