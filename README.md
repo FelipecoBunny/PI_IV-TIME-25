@@ -10,6 +10,8 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 - Criação de contas e login
 - Registrar pets
 - Ver informações cruciais na tela inicial
+- Cadastrar e registrar consultas passadas e futuras
+- Salvar documentos em cada consulta para fácil acesso
 
 ---
 
@@ -18,15 +20,24 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 ### Frontend (WebApp)
 - **HTML**
 - **CSS**
-- *(adicionar bibliotecas no futuro se necessário)*
+- **Javascript**
 
 ### Backend
 - **Javascript**
 - **Node**
-- *(adicionar bibliotecas e/ou dependências no futuro se necessário)*
+- **Express:** framework web para rotas, middlewares e servidor HTTP
+- **Mongodb:** driver oficial do MongoDB
+- **Multer:** middleware para upload de arquivos em memória
+- **Bcryptjs:** hash e verificação segura de senhas
+- **Express-session e Connect-mongo:** gerenciamento de sessões persistidas no MongoDB
+
+### Servidor
+- **Java**
+- **Gson:** serialização e desserialização de JSON na comunicação TCP com o Node.js
 
 ### Banco de Dados
 - **MongoDB**
+- **GridFS:** ferramenta nativa para armazenar PDFs e imagens
 
 ### Ferramentas e IDEs
 - **Git/Github e Github Projects**
@@ -39,9 +50,9 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 | Nome Completo                 | RA       |
 | ----------------------------- | -------- |
 | Felipe Nasser Coelho Moussa   | 25004922 |
-| Giovanni Joseppe Bozelli      |          |
-| Maria Júlia Souza de Oliveira |          |
-| Mateus de Souza Campos        |          |
+| Giovanni Joseppe Bozelli      | 25006837 |
+| Maria Júlia Souza de Oliveira | 25007909 |
+| Mateus de Souza Campos        | 25009935 |
 
 ---
 
