@@ -1,0 +1,227 @@
+<!-- Autoria: Giovanni Joseppe Bozelli -->
+<!-- RA: 25006837 -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carteira de vacinação | PetHealth</title>
+
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/inicial.css">
+  <link rel="stylesheet" href="css/consultas.css">
+  <link rel="stylesheet" href="css/vacinas.css">
+</head>
+
+<body class="painel-page vacinas-page">
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <nav aria-label="Principal">
+        <ul class="app-nav">
+          <li><a href="inicial.html" class="app-header__link">Início</a></li>
+          <li><a href="consultas.html" class="app-header__link">Consultas</a></li>
+          <li><a href="vacinas.html" class="app-header__link" aria-current="page">Vacinas</a></li>
+          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+
+    <!-- Mensagens de estado -->
+    <div id="loading-state" class="empty">Buscando carteira de vacinação do pet...</div>
+
+    <div id="error-state" class="empty" hidden>
+      <p class="error-text">Ocorreu um erro ao carregar as vacinas.</p>
+      <button type="button" class="btn btn--outline btn--sm" id="retry-btn">Tentar novamente</button>
+    </div>
+
+    <!-- Conteúdo da tela -->
+    <div id="vacinas-content" hidden>
+
+      <section class="painel-top" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">Carteira de vacinação</h1>
+          <p class="subtitle" id="pet-subtitle"></p>
+          <p class="since" id="resumo"></p>
+          <button type="button" class="btn btn--sm btn--dark" id="register-btn">Registrar vacina</button>
+        </div>
+
+        <div class="pet-switcher" id="pet-switcher-container">
+          <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
+          <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+          </div>
+        </div>
+      </section>
+
+      <div class="painel-grid">
+
+        <!-- Coluna principal -->
+        <div class="painel-main">
+          <section class="painel-section" aria-labelledby="applied-title">
+            <h2 id="applied-title">Vacinas aplicadas</h2>
+
+            <div class="vacina-list" id="vacina-list"></div>
+            <p class="empty" id="vacinas-empty" aria-live="polite" hidden>Nenhuma vacina registrada.</p>
+          </section>
+        </div>
+
+        <!-- Coluna lateral -->
+        <aside class="painel-side" aria-labelledby="next-title">
+          <h2 id="next-title">Próximas vacinas</h2>
+          <div id="next-list"></div>
+          <p class="empty" id="next-empty" hidden>Nenhuma vacina agendada.</p>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Cadastrar e editar vacina -->
+  <dialog class="doc-dialog" id="vaccine-dialog" aria-labelledby="vaccine-title">
+    <div class="doc-dialog__head">
+      <h2 id="vaccine-title">Registrar vacina</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="vaccine-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="vaccine-subtitle">Preencha os dados da dose aplicada ou agendada para o pet.</p>
+
+    <form id="vaccine-form" novalidate>
+      <div id="vaccine-error" class="alert" role="alert" hidden></div>
+
+      <fieldset class="field status-fieldset">
+        <legend>Situação da dose</legend>
+        <div class="status-options">
+          <label class="status-option">
+            <input type="radio" name="status" value="aplicada" id="status-aplicada" checked>
+            <span>Já aplicada</span>
+          </label>
+          <label class="status-option">
+            <input type="radio" name="status" value="pendente" id="status-pendente">
+            <span>Agendar dose</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="vacina-titulo">Vacina</label>
+        <input type="text" id="vacina-titulo" name="titulo" list="vacinas-sugestoes"
+          placeholder="Ex.: V10, Antirrábica, V4 felina" maxlength="100" required>
+        <datalist id="vacinas-sugestoes">
+          <option value="V8"></option>
+          <option value="V10"></option>
+          <option value="Antirrábica"></option>
+          <option value="Gripe canina"></option>
+          <option value="Giárdia"></option>
+          <option value="Leishmaniose"></option>
+          <option value="Leptospirose"></option>
+          <option value="V3 felina"></option>
+          <option value="V4 felina"></option>
+          <option value="V5 felina"></option>
+          <option value="FeLV"></option>
+        </datalist>
+      </div>
+
+      <div class="field">
+        <label for="vacina-dose">Dose</label>
+        <select id="vacina-dose" name="dose" required>
+          <option value="">Selecione a dose</option>
+          <option value="1ª dose">1ª dose</option>
+          <option value="2ª dose">2ª dose</option>
+          <option value="3ª dose">3ª dose</option>
+          <option value="Reforço">Reforço</option>
+          <option value="Dose única">Dose única</option>
+        </select>
+      </div>
+
+      <!-- Campos de vacina já aplicada -->
+      <div id="applied-fields">
+        <div class="field">
+          <label for="vacina-data-aplicacao">Data da aplicação</label>
+          <input type="date" id="vacina-data-aplicacao" name="dataAplicacao" required>
+        </div>
+
+        <div class="filter-panel">
+          <div class="filter-panel__field">
+            <label for="vacina-lote">Lote <span class="optional">(opcional)</span></label>
+            <input type="text" id="vacina-lote" name="lote" class="search-bar__input" placeholder="Ex.: 23AB45"
+              maxlength="60">
+          </div>
+          <div class="filter-panel__field">
+            <label for="vacina-fabricante">Fabricante <span class="optional">(opcional)</span></label>
+            <input type="text" id="vacina-fabricante" name="fabricante" class="search-bar__input"
+              placeholder="Ex.: Zoetis" maxlength="80">
+          </div>
+        </div>
+      </div>
+
+      <!-- Aviso e status quando for agendamento de dose pendente -->
+      <div id="pending-fields" hidden>
+        <p class="status-preview" id="pending-status-preview">
+          Informe a data esperada abaixo para agendar a aplicação desta dose.
+        </p>
+      </div>
+
+      <div class="field">
+        <label for="vacina-proxima-dose" id="proxima-dose-label">
+          Próxima dose <span class="optional">(opcional)</span>
+        </label>
+        <input type="date" id="vacina-proxima-dose" name="proximaDose">
+        <p class="hint" id="proxima-dose-hint">Data prevista para o próximo reforço (apenas para controle).</p>
+      </div>
+
+      <div class="field">
+        <label for="vacina-local">Clínica / Local</label>
+        <input type="text" id="vacina-local" name="local" placeholder="Ex.: Clínica VetVida — Av. Brasil, 1420"
+          maxlength="150" required>
+      </div>
+
+      <div class="field">
+        <label for="vacina-veterinario">Médico veterinário</label>
+        <input type="text" id="vacina-veterinario" name="veterinario" placeholder="Ex.: Dra. Camila Nogueira"
+          maxlength="100" required>
+      </div>
+
+      <div class="field">
+        <label for="vacina-obs">Observações <span class="optional">(opcional)</span></label>
+        <textarea id="vacina-obs" name="observacoes" rows="3"
+          placeholder="Reações, recomendações ou anotações do veterinário" maxlength="500"></textarea>
+      </div>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm" id="vaccine-save">Salvar</button>
+        <button type="button" class="btn btn--sm btn--outline" id="vaccine-delete" hidden>Excluir</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Documentos da vacina -->
+  <dialog class="doc-dialog" id="doc-dialog" aria-labelledby="doc-title">
+    <div class="doc-dialog__head">
+      <h2 id="doc-title">Documentos</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="doc-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="doc-subtitle"></p>
+
+    <p class="empty" id="doc-status" aria-live="polite" hidden></p>
+    <ul class="doc-list" id="doc-list"></ul>
+
+    <form class="doc-upload" id="doc-form" novalidate>
+      <div id="doc-error" class="alert" role="alert" hidden></div>
+      <label for="doc-file">Anexar selo, comprovante ou foto da carteira</label>
+      <input type="file" id="doc-file" name="arquivos" accept=".pdf,image/*" multiple>
+      <p class="hint">PDF ou imagem, até 10 MB por arquivo.</p>
+      <button type="submit" class="btn btn--sm" id="doc-submit">Enviar</button>
+    </form>
+  </dialog>
+
+  <script src="js/logout.js"></script>
+  <script src="js/vacinas.js"></script>
+</body>
+
+</html>
