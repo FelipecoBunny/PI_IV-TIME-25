@@ -60,7 +60,7 @@ export const listarPets = async (req, res) => {
     const db = getDatabase();
     const pets = await db.collection("pets")
       .find({ donoId: new ObjectId(req.session.userId) })
-      .project({ nome: 1, especie: 1 })
+      .project({ nome: 1, especie: 1, raca: 1, dataNascimento: 1 })
       .toArray();
 
     res.json(pets);
