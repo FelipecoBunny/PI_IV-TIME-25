@@ -4,7 +4,18 @@
 */
 
 import express from 'express';
-import { cadastrarPet, listarPets, getDashboard } from '../controllers/petController.js';
+import {
+  cadastrarPet,
+  listarPets,
+  getDashboard,
+  obterPet,
+  atualizarPet,
+  excluirPet,
+  uploadFotoPetMiddleware,
+  enviarFotoPet,
+  obterFotoPet,
+  removerFotoPet
+} from '../controllers/petController.js';
 import { requireAuth } from "../middleware/requireAuth.js";
 import {
   listarConsultas,
@@ -32,6 +43,14 @@ const router = express.Router();
 router.post('/', requireAuth, cadastrarPet);
 router.get('/', requireAuth, listarPets);
 router.get('/:petId/dashboard', requireAuth, getDashboard);
+
+// Pet individual e foto
+router.get('/:petId', requireAuth, obterPet);
+router.put('/:petId', requireAuth, atualizarPet);
+router.delete('/:petId', requireAuth, excluirPet);
+router.get('/:petId/foto', requireAuth, obterFotoPet);
+router.put('/:petId/foto', requireAuth, uploadFotoPetMiddleware, enviarFotoPet);
+router.delete('/:petId/foto', requireAuth, removerFotoPet);
 
 // Consultas e documentos
 router.get('/:petId/consultas', requireAuth, listarConsultas);
