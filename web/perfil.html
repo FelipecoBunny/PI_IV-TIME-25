@@ -1,0 +1,296 @@
+<!-- Autoria: Maria Júlia Souza de Oliveira -->
+<!-- RA: 25007909 -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do tutor | PetHealth</title>
+
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/inicial.css">
+  <link rel="stylesheet" href="css/consultas.css">
+  <link rel="stylesheet" href="css/perfil.css">
+</head>
+
+<body class="painel-page perfil-page">
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <nav aria-label="Principal">
+        <ul class="app-nav">
+          <li><a href="inicial.html" class="app-header__link">Início</a></li>
+          <li><a href="consultas.html" class="app-header__link">Consultas</a></li>
+          <li><a href="vacinas.html" class="app-header__link">Vacinas</a></li>
+          <li><a href="perfil.html" class="app-header__link" aria-current="page">Perfil</a></li>
+          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+
+    <!-- Mensagens de estado -->
+    <div id="loading-state" class="empty">Carregando perfil...</div>
+
+    <div id="error-state" class="empty" hidden>
+      <p class="error-text">Ocorreu um erro ao carregar seu perfil.</p>
+      <button type="button" class="btn btn--outline btn--sm" id="retry-btn">Tentar novamente</button>
+    </div>
+
+    <!-- Conteúdo da tela -->
+    <div id="perfil-content" hidden>
+
+      <section class="painel-top profile-header" aria-labelledby="profile-name">
+        <div class="profile-identity">
+          <div class="profile-avatar" aria-hidden="true">
+            <img id="profile-avatar-img" class="profile-avatar__img" alt="" hidden>
+            <span id="profile-avatar-initials" class="profile-avatar__initials"></span>
+          </div>
+          <div class="profile-identity__text">
+            <h1 id="profile-name"></h1>
+            <p class="subtitle" id="profile-email"></p>
+            <p class="profile-since" id="profile-since" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="painel-grid">
+
+        <!-- Coluna principal -->
+        <div class="painel-main">
+
+          <section class="painel-section" aria-labelledby="personal-title">
+            <article class="card card--neutral profile-card">
+              <h2 id="personal-title">Dados pessoais</h2>
+
+              <form id="profile-form" novalidate>
+                <div id="profile-error" class="alert" role="alert" hidden></div>
+                <div id="profile-success" class="alert alert--success" role="status" hidden></div>
+
+                <div class="field">
+                  <label for="tutor-name">Nome completo</label>
+                  <input type="text" id="tutor-name" name="name" autocomplete="name" maxlength="80" required>
+                </div>
+
+                <div class="field">
+                  <label for="tutor-email">E-mail</label>
+                  <input type="email" id="tutor-email" name="email" autocomplete="email" readonly
+                    aria-describedby="email-hint">
+                  <p class="hint" id="email-hint">O e-mail não pode ser alterado.</p>
+                </div>
+
+                <div class="field">
+                  <label for="tutor-phone">Telefone <span class="optional">(opcional)</span></label>
+                  <input type="tel" id="tutor-phone" name="telefone" autocomplete="tel" inputmode="tel"
+                    placeholder="(19) 99999-8888" maxlength="20">
+                </div>
+
+                <div class="field">
+                  <label for="tutor-city">Cidade <span class="optional">(opcional)</span></label>
+                  <input type="text" id="tutor-city" name="cidade" autocomplete="address-level2"
+                    placeholder="Ex.: Campinas" maxlength="80">
+                </div>
+
+                <div class="card__actions">
+                  <button type="submit" class="btn btn--sm" id="profile-save">Salvar alterações</button>
+                </div>
+              </form>
+            </article>
+          </section>
+
+          <section class="painel-section" aria-labelledby="password-title">
+            <article class="card card--neutral profile-card">
+              <h2 id="password-title">Alterar senha</h2>
+
+              <form id="password-form" novalidate>
+                <div id="password-error" class="alert" role="alert" hidden></div>
+                <div id="password-success" class="alert alert--success" role="status" hidden></div>
+
+                <div class="field">
+                  <label for="current-password">Senha atual</label>
+                  <div class="password-field">
+                    <input type="password" id="current-password" name="senhaAtual" autocomplete="current-password"
+                      required>
+                    <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+                      <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94" />
+                        <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-2.16 3.19" />
+                        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="new-password">Nova senha</label>
+                  <div class="password-field">
+                    <input type="password" id="new-password" name="novaSenha" autocomplete="new-password" minlength="8"
+                      maxlength="72" required>
+                    <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+                      <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94" />
+                        <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-2.16 3.19" />
+                        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="hint">Entre 8 e 72 caracteres, diferente da senha atual.</p>
+                </div>
+
+                <div class="field">
+                  <label for="confirm-password">Confirmar nova senha</label>
+                  <div class="password-field">
+                    <input type="password" id="confirm-password" name="confirmarSenha" autocomplete="new-password"
+                      minlength="8" maxlength="72" required>
+                    <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+                      <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94" />
+                        <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-2.16 3.19" />
+                        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card__actions">
+                  <button type="submit" class="btn btn--sm" id="password-save">Alterar senha</button>
+                </div>
+              </form>
+            </article>
+          </section>
+
+        </div>
+
+        <!-- Coluna lateral -->
+        <aside class="painel-side">
+
+          <section class="painel-section" aria-labelledby="photo-title">
+            <article class="card card--neutral profile-card">
+              <h2 id="photo-title">Foto de perfil</h2>
+
+              <form id="photo-form" class="doc-upload" novalidate>
+                <div id="photo-error" class="alert" role="alert" hidden></div>
+                <div id="photo-success" class="alert alert--success" role="status" hidden></div>
+
+                <label for="photo-input">Escolher imagem</label>
+                <input type="file" id="photo-input" name="foto" accept="image/jpeg,image/png,image/webp">
+                <p class="hint">JPEG, PNG ou WebP, até 2 MB.</p>
+
+                <div class="card__actions">
+                  <button type="submit" class="btn btn--sm" id="photo-save">Enviar foto</button>
+                  <button type="button" class="btn btn--sm btn--outline" id="photo-remove" hidden>Remover foto</button>
+                </div>
+              </form>
+            </article>
+          </section>
+
+          <section class="painel-section" aria-labelledby="pets-title">
+            <article class="card card--neutral profile-card">
+              <div class="card__row profile-pets__head">
+                <h2 id="pets-title">Meus pets</h2>
+                <a href="cadastro-pet.html" class="btn btn--sm btn--dark">Novo pet</a>
+              </div>
+
+              <ul class="pet-profile-list" id="pets-list"></ul>
+              <p class="empty" id="pets-empty" hidden>
+                Nenhum pet cadastrado. <a href="cadastro-pet.html">Cadastrar pet</a>
+              </p>
+            </article>
+          </section>
+
+          <section class="painel-section" aria-labelledby="danger-title">
+            <article class="card card--danger profile-card">
+              <h2 id="danger-title" class="card__title">Zona de perigo</h2>
+              <p class="card__meta">
+                Excluir sua conta apaga permanentemente todos os seus pets, consultas, vacinas, medicamentos e arquivos
+                enviados.
+              </p>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--danger" id="delete-account-btn">Excluir minha
+                  conta</button>
+              </div>
+            </article>
+          </section>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Diálogo de confirmação de exclusão de conta -->
+  <dialog class="doc-dialog delete-dialog" id="delete-dialog" aria-labelledby="delete-title">
+    <div class="doc-dialog__head">
+      <h2 id="delete-title">Excluir minha conta</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="delete-close">Fechar</button>
+    </div>
+    <p class="subtitle">Esta ação é permanente e não pode ser desfeita.</p>
+
+    <form id="delete-form" novalidate>
+      <div id="delete-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="delete-password">Confirme sua senha</label>
+        <div class="password-field">
+          <input type="password" id="delete-password" name="senha" autocomplete="current-password" required>
+          <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+            <svg class="icon-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg class="icon-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94" />
+              <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-2.16 3.19" />
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <label class="confirm-check">
+        <input type="checkbox" id="delete-confirm" required>
+        <span>Entendo que meus pets e registros serão apagados definitivamente</span>
+      </label>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm btn--danger" id="delete-submit">Excluir conta definitivamente</button>
+        <button type="button" class="btn btn--sm btn--outline" id="delete-cancel">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/logout.js"></script>
+  <script src="js/perfil.js"></script>
+</body>
+
+</html>
