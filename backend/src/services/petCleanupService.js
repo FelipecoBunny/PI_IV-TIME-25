@@ -50,5 +50,23 @@ export async function excluirDadosDosPets(db, petIds) {
     db.collection("exams").deleteMany({ petId: { $in: ids } }),
   ]);
 
+  // Remove fotos dos pets no GridFS, se houver
+  const petsComFoto = await db
+    .collection("pets")
+    .find({ _id: { $in: ids }, fotoId: { $exists: true, $ne: null } }, { projection: { fotoId: 1 } })
+    .toArray();
+
+  if (petsComFoto.length > 0) {
+    const fotosBucket = new GridFSBucket(db, { bucketName: "fotosPets" });
+    for (const pet of petsComFoto) {
+      try {
+        const fid = pet.fotoId instanceof ObjectId ? pet.fotoId : new ObjectId(pet.fotoId);
+        await fotosBucket.delete(fid);
+      } catch {
+        // Ignora caso a foto já tenha sido removida
+      }
+    }
+  }
+
   await db.collection("pets").deleteMany({ _id: { $in: ids } });
 }

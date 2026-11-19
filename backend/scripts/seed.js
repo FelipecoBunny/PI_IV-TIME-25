@@ -74,11 +74,31 @@ async function runSeed() {
           }
         }
 
+        const fotosPetsBucket = new GridFSBucket(db, { bucketName: 'fotosPets' });
+        for (const pet of userPets) {
+          if (pet.fotoId) {
+            try {
+              await fotosPetsBucket.delete(pet.fotoId);
+            } catch {
+              // Ignora caso a foto já não exista no bucket
+            }
+          }
+        }
+
         await db.collection('vaccines').deleteMany({ petId: { $in: petIds } });
         await db.collection('medications').deleteMany({ petId: { $in: petIds } });
         await db.collection('consultations').deleteMany({ petId: { $in: petIds } });
         await db.collection('medicationLogs').deleteMany({ petId: { $in: petIds } });
         await db.collection('exams').deleteMany({ petId: { $in: petIds } });
+      }
+
+      if (existingUser.fotoId) {
+        const fotosPerfilBucket = new GridFSBucket(db, { bucketName: 'fotosPerfil' });
+        try {
+          await fotosPerfilBucket.delete(existingUser.fotoId);
+        } catch {
+          // Ignora caso a foto já não exista no bucket
+        }
       }
 
       await db.collection('pets').deleteMany({ donoId: ownerId });
@@ -100,19 +120,25 @@ async function runSeed() {
     const pet1 = {
       donoId: ownerId,
       nome: 'Luna',
-      especie: 'Cachorro',
+      especie: 'cachorro',
       raca: 'SRD',
       dataNascimento: '2020-05-10',
       peso: 15.2,
+      sexo: 'femea',
+      comprimentoCm: 65,
+      alturaCm: 48,
       criadoEm: new Date()
     };
     const pet2 = {
       donoId: ownerId,
       nome: 'Garfield',
-      especie: 'Gato',
+      especie: 'gato',
       raca: 'Persa',
       dataNascimento: '2022-01-15',
       peso: 5.5,
+      sexo: 'macho',
+      comprimentoCm: 46,
+      alturaCm: 28,
       criadoEm: new Date()
     };
 
