@@ -1,6 +1,6 @@
 /*
 * Seed gerada por IA.
-* APENAS PARA PSEUDO-DADOS DE TESTE. NÃO USAR EM PRODUÇÃO.
+* APENAS PARA PSEUDO-DADOS DE TESTE.
 */
 
 import 'dotenv/config';
@@ -43,12 +43,30 @@ async function runSeed() {
           .find({ petId: { $in: petIds } })
           .toArray();
 
-        const bucket = new GridFSBucket(db, { bucketName: 'consultaDocumentos' });
+        const consultaBucket = new GridFSBucket(db, { bucketName: 'consultaDocumentos' });
         for (const consulta of consultasAntigas) {
           for (const doc of consulta.documentos || []) {
             if (doc.fileId) {
               try {
-                await bucket.delete(doc.fileId);
+                await consultaBucket.delete(doc.fileId);
+              } catch {
+                // Ignora caso o arquivo já não exista no bucket
+              }
+            }
+          }
+        }
+
+        const vacinasAntigas = await db
+          .collection('vaccines')
+          .find({ petId: { $in: petIds } })
+          .toArray();
+
+        const vacinaBucket = new GridFSBucket(db, { bucketName: 'vacinaDocumentos' });
+        for (const vacina of vacinasAntigas) {
+          for (const doc of vacina.documentos || []) {
+            if (doc.fileId) {
+              try {
+                await vacinaBucket.delete(doc.fileId);
               } catch {
                 // Ignora caso o arquivo já não exista no bucket
               }
@@ -100,13 +118,77 @@ async function runSeed() {
 
     const petRes = await db.collection('pets').insertMany([pet1, pet2]);
     const petLunaId = petRes.insertedIds[0];
+    const agora = new Date();
 
     // 4. Vacinas (Luna)
     const vacinasRes = await db.collection('vaccines').insertMany([
-      { petId: petLunaId, ownerId, titulo: 'V10 - 2ª dose', status: 'pendente', proximaDose: getDateOffset(-3) },
-      { petId: petLunaId, ownerId, titulo: 'Antirrábica', status: 'pendente', proximaDose: getDateOffset(5) },
-      { petId: petLunaId, ownerId, titulo: 'Gripe canina', status: 'pendente', proximaDose: getDateOffset(30) },
-      { petId: petLunaId, ownerId, titulo: 'V10 - 1ª dose', status: 'aplicada', dataAplicacao: '2025-01-10' }
+      {
+        petId: petLunaId,
+        ownerId,
+        titulo: 'V10',
+        dose: '2ª dose',
+        status: 'pendente',
+        proximaDose: getDateOffset(-3),
+        local: 'Clínica VetVida — Av. Brasil, 1420',
+        veterinario: 'Dra. Camila Nogueira',
+        observacoes: 'Levar carteirinha física.',
+        documentos: [],
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        titulo: 'Antirrábica',
+        dose: 'Reforço',
+        status: 'pendente',
+        proximaDose: getDateOffset(5),
+        local: 'Hospital Veterinário Cambuí — R. Coronel Quirino, 890',
+        veterinario: 'Dr. Rafael Mendes',
+        documentos: [],
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        titulo: 'Gripe canina',
+        dose: 'Dose única',
+        status: 'pendente',
+        proximaDose: getDateOffset(30),
+        local: 'Clínica PetCare — Av. Norte-Sul, 510',
+        veterinario: 'Dra. Beatriz Almeida',
+        documentos: [],
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        titulo: 'V10',
+        dose: '1ª dose',
+        status: 'aplicada',
+        dataAplicacao: getDateOffset(-35),
+        proximaDose: getDateOffset(-3),
+        lote: 'VT26A1',
+        fabricante: 'Zoetis',
+        local: 'Clínica VetVida — Av. Brasil, 1420',
+        veterinario: 'Dra. Camila Nogueira',
+        observacoes: 'Sem reações adversas.',
+        documentos: [],
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        titulo: 'Antirrábica',
+        dose: 'Dose única',
+        status: 'aplicada',
+        dataAplicacao: '2025-11-20',
+        lote: 'AR2509',
+        fabricante: 'Boehringer Ingelheim',
+        local: 'Hospital Veterinário Cambuí — R. Coronel Quirino, 890',
+        veterinario: 'Dr. Rafael Mendes',
+        documentos: [],
+        criadoEm: agora
+      }
     ]);
 
     // 5. Medicamentos (Luna)
@@ -137,7 +219,6 @@ async function runSeed() {
     ]);
 
     // 6. Consultas (Luna)
-    const agora = new Date();
     const consultasRes = await db.collection('consultations').insertMany([
       {
         petId: petLunaId,

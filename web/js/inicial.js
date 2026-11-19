@@ -9,6 +9,8 @@ const calendarSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" str
 
 const clockSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>`;
 
+const alertSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 1.5 21h21L12 3zm0 6 6.9 12H5.1L12 9zm-1 3v4h2v-4h-2zm0 5v2h2v-2h-2z" /></svg>`;
+
 // Elementos
 const loadingState = document.getElementById('loading-state');
 const errorState = document.getElementById('error-state');
@@ -35,6 +37,23 @@ const formatData = (dataISO) => {
   return `${d}/${m}/${y}`;
 };
 
+function getHojeISO() {
+  return new Date().toLocaleDateString('en-CA');
+}
+
+function diffDiasAte(dataAlvoISO) {
+  if (!dataAlvoISO) return null;
+  const [y1, m1, d1] = getHojeISO().split('-').map(Number);
+  const [y2, m2, d2] = String(dataAlvoISO).slice(0, 10).split('-').map(Number);
+  return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
+}
+
+function tituloVacina(vacina, fallback) {
+  const base = (vacina && vacina.titulo) || fallback || 'Vacina';
+  return vacina && vacina.dose ? `${base} · ${vacina.dose}` : base;
+}
+
+// Evita que texto vindo do banco seja interpretado como HTML
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -55,6 +74,7 @@ async function fetchAPI(endpoint) {
 }
 
 let consultasCache = new Map();
+let vacinasCache = new Map();
 
 async function carregarPainelDoPet(petId) {
   loadingState.hidden = false;
@@ -62,14 +82,19 @@ async function carregarPainelDoPet(petId) {
   painelContent.hidden = true;
 
   try {
-    const [data, consultasData] = await Promise.all([
+    const [data, consultasData, vacinasData] = await Promise.all([
       fetchAPI(`/api/pets/${petId}/dashboard`),
       fetchAPI(`/api/pets/${petId}/consultas`),
+      fetchAPI(`/api/pets/${petId}/vacinas`),
     ]);
 
     consultasCache = new Map();
     consultasData.historico.forEach((c) => consultasCache.set(String(c._id), { ...c, status: 'realizada' }));
     consultasData.proximas.forEach((c) => consultasCache.set(String(c._id), { ...c, motivo: c.titulo, status: 'agendada' }));
+
+    vacinasCache = new Map();
+    (vacinasData.aplicadas || []).forEach((v) => vacinasCache.set(String(v._id), { ...v, status: 'aplicada' }));
+    (vacinasData.proximas || []).forEach((v) => vacinasCache.set(String(v._id), { ...v, status: 'pendente' }));
 
     renderizarDashboard(data);
 
@@ -111,7 +136,7 @@ function renderizarDashboard(data) {
     });
   }
 
-  // Renderiza Hoje (Consultas)
+  // Renderiza Consultas de Hoje
   sections.today.list.innerHTML = '';
   if (data.hoje.length === 0) {
     sections.today.empty.hidden = false;
@@ -147,7 +172,9 @@ function renderizarDashboard(data) {
   } else {
     sections.next.empty.hidden = true;
     data.proximos7Dias.forEach(item => {
-      const ehConsulta = consultasCache.has(String(item.id));
+      const idStr = String(item.id);
+      const ehConsulta = consultasCache.has(idStr);
+      const vacina = vacinasCache.get(idStr);
       const dataISO = String(item.data || '').slice(0, 10);
 
       if (ehConsulta) {
@@ -161,6 +188,22 @@ function renderizarDashboard(data) {
             <div class="card__actions">
               <button type="button" class="btn btn--sm btn--outline" data-action="documentos">Documentos</button>
               <button type="button" class="btn btn--sm" data-action="detalhes" data-id="${esc(item.id)}">Ver detalhes</button>
+            </div>
+          </article>`;
+      } else if (vacina) {
+        sections.next.list.innerHTML += `
+          <article class="card card--warning" data-id="${esc(item.id)}" data-date="${esc(dataISO)}">
+            <div class="card__row">
+              ${clockSvg}
+              <div class="card__main">
+                <span class="card__label">No limite</span>
+                <h3 class="card__title">${esc(tituloVacina(vacina, item.titulo))}</h3>
+              </div>
+            </div>
+            <p class="card__meta">Data esperada: ${esc(formatData(item.data))}</p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline" data-action="vacina-detalhes" data-id="${esc(item.id)}">Ver detalhes</button>
+              <button type="button" class="btn btn--sm" data-action="vacina-aplicar" data-id="${esc(item.id)}">Marcar como aplicada</button>
             </div>
           </article>`;
       } else {
@@ -179,26 +222,45 @@ function renderizarDashboard(data) {
     });
   }
 
-  // Renderiza Atrasados
+  // Renderiza Vacinas Atrasadas
   sections.late.list.innerHTML = '';
   if (data.atrasados.length === 0) {
     sections.late.empty.hidden = false;
   } else {
     sections.late.empty.hidden = true;
     data.atrasados.forEach(item => {
-      sections.late.list.innerHTML += `
-        <article class="card card--danger">
-          <div class="card__row">
-            <svg class="card__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 3 1.5 21h21L12 3zm0 6 6.9 12H5.1L12 9zm-1 3v4h2v-4h-2zm0 5v2h2v-2h-2z" />
-            </svg>
-            <h3 class="card__title">${esc(item.titulo)}</h3>
-          </div>
-          <p class="card__meta">${esc(formatData(item.data))}</p>
-          <div class="card__actions">
-            <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-          </div>
-        </article>`;
+      const vacina = vacinasCache.get(String(item.id));
+      const dataISO = String(item.data || '').slice(0, 10);
+
+      if (vacina) {
+        sections.late.list.innerHTML += `
+          <article class="card card--danger" data-id="${esc(item.id)}" data-date="${esc(dataISO)}">
+            <div class="card__row">
+              ${alertSvg}
+              <div class="card__main">
+                <span class="card__label">Atrasada</span>
+                <h3 class="card__title">${esc(tituloVacina(vacina, item.titulo))}</h3>
+              </div>
+            </div>
+            <p class="card__meta">Data esperada: ${esc(formatData(item.data))}</p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline" data-action="vacina-detalhes" data-id="${esc(item.id)}">Ver detalhes</button>
+              <button type="button" class="btn btn--sm" data-action="vacina-aplicar" data-id="${esc(item.id)}">Marcar como aplicada</button>
+            </div>
+          </article>`;
+      } else {
+        sections.late.list.innerHTML += `
+          <article class="card card--danger">
+            <div class="card__row">
+              ${alertSvg}
+              <h3 class="card__title">${esc(item.titulo)}</h3>
+            </div>
+            <p class="card__meta">${esc(formatData(item.data))}</p>
+            <div class="card__actions">
+              <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
+            </div>
+          </article>`;
+      }
     });
   }
 }
@@ -471,6 +533,304 @@ detailDeleteBtn.addEventListener('click', async () => {
     detailError.hidden = false;
   } finally {
     detailDeleteBtn.disabled = false;
+  }
+});
+
+// Detalhes da vacina
+const vaccineDialog = document.getElementById('vaccine-dialog');
+const vaccineTitle = document.getElementById('vaccine-title');
+const vaccineSubtitle = document.getElementById('vaccine-subtitle');
+const vaccineClose = document.getElementById('vaccine-close');
+const vaccineForm = document.getElementById('vaccine-form');
+const vaccineError = document.getElementById('vaccine-error');
+const vaccineSaveBtn = document.getElementById('vaccine-save');
+const vaccineDeleteBtn = document.getElementById('vaccine-delete');
+
+const statusAplicadaRadio = document.getElementById('status-aplicada');
+const statusPendenteRadio = document.getElementById('status-pendente');
+const vacinaTituloInput = document.getElementById('vacina-titulo');
+const vacinaDoseSelect = document.getElementById('vacina-dose');
+const appliedFields = document.getElementById('applied-fields');
+const pendingFields = document.getElementById('pending-fields');
+const pendingStatusPreview = document.getElementById('pending-status-preview');
+const dataAplicacaoInput = document.getElementById('vacina-data-aplicacao');
+const loteInput = document.getElementById('vacina-lote');
+const fabricanteInput = document.getElementById('vacina-fabricante');
+const proximaDoseLabel = document.getElementById('proxima-dose-label');
+const proximaDoseInput = document.getElementById('vacina-proxima-dose');
+const proximaDoseHint = document.getElementById('proxima-dose-hint');
+const vacinaLocalInput = document.getElementById('vacina-local');
+const vacinaLocalLabel = document.querySelector('label[for="vacina-local"]');
+const vacinaVetInput = document.getElementById('vacina-veterinario');
+const vacinaVetLabel = document.querySelector('label[for="vacina-veterinario"]');
+const vacinaObsInput = document.getElementById('vacina-obs');
+
+let editingVacinaId = null;
+
+function getStatusVacina() {
+  return statusPendenteRadio.checked ? 'pendente' : 'aplicada';
+}
+
+function limparErrosVacina() {
+  vaccineError.hidden = true;
+  vaccineForm.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+    el.removeAttribute('aria-invalid');
+  });
+}
+
+function mostrarErroVacina(mensagem, campo) {
+  vaccineError.textContent = mensagem;
+  vaccineError.hidden = false;
+  if (campo) {
+    campo.setAttribute('aria-invalid', 'true');
+    campo.focus();
+  }
+}
+
+function atualizarPreviewVacinaPendente() {
+  const data = proximaDoseInput.value;
+  if (!data) {
+    pendingStatusPreview.textContent = 'Informe a data esperada abaixo para agendar a aplicação desta dose.';
+    return;
+  }
+
+  const dias = diffDiasAte(data);
+  if (dias < 0) {
+    const atraso = Math.abs(dias);
+    pendingStatusPreview.textContent = `Atenção: esta dose está atrasada há ${atraso} ${atraso === 1 ? 'dia' : 'dias'}.`;
+  } else if (dias === 0) {
+    pendingStatusPreview.textContent = 'No limite: a aplicação desta dose está prevista para hoje.';
+  } else if (dias <= 7) {
+    pendingStatusPreview.textContent = `No limite: a aplicação está prevista para daqui a ${dias} ${dias === 1 ? 'dia' : 'dias'}.`;
+  } else {
+    pendingStatusPreview.textContent = `Agendada para ${formatData(data)} (em ${dias} dias).`;
+  }
+}
+
+function atualizarModoVacina() {
+  const ehPendente = getStatusVacina() === 'pendente';
+
+  appliedFields.hidden = ehPendente;
+  pendingFields.hidden = !ehPendente;
+
+  dataAplicacaoInput.required = !ehPendente;
+  proximaDoseInput.required = ehPendente;
+  vacinaLocalInput.required = !ehPendente;
+  vacinaVetInput.required = !ehPendente;
+
+  if (ehPendente) {
+    proximaDoseLabel.textContent = 'Data esperada';
+    proximaDoseHint.textContent = 'Data prevista para aplicar esta dose no pet.';
+    vacinaLocalLabel.innerHTML = 'Clínica / Local <span class="optional">(opcional)</span>';
+    vacinaVetLabel.innerHTML = 'Médico veterinário <span class="optional">(opcional)</span>';
+    atualizarPreviewVacinaPendente();
+  } else {
+    proximaDoseLabel.innerHTML = 'Próxima dose <span class="optional">(opcional)</span>';
+    proximaDoseHint.textContent = 'Data prevista para o próximo reforço (apenas para controle).';
+    vacinaLocalLabel.textContent = 'Clínica / Local';
+    vacinaVetLabel.textContent = 'Médico veterinário';
+    dataAplicacaoInput.max = getHojeISO();
+  }
+}
+
+function abrirModalVacina(vacinaId, marcarComoAplicada = false) {
+  const item = vacinasCache.get(String(vacinaId));
+  if (!item) return;
+
+  editingVacinaId = String(vacinaId);
+  limparErrosVacina();
+  vaccineForm.reset();
+
+  const ehPendente = !marcarComoAplicada && item.status === 'pendente';
+  vaccineTitle.textContent = marcarComoAplicada ? 'Marcar como aplicada' : 'Detalhes da vacina';
+  vaccineSubtitle.textContent = marcarComoAplicada
+    ? 'Confirme os dados da aplicação desta dose.'
+    : (ehPendente ? 'Situação: Dose agendada' : 'Situação: Vacina aplicada');
+  vaccineSaveBtn.textContent = marcarComoAplicada ? 'Confirmar aplicação' : 'Salvar alterações';
+
+  statusAplicadaRadio.checked = !ehPendente;
+  statusPendenteRadio.checked = ehPendente;
+
+  vacinaTituloInput.value = item.titulo || '';
+  vacinaDoseSelect.value = item.dose || '';
+  dataAplicacaoInput.value = marcarComoAplicada ? getHojeISO() : String(item.dataAplicacao || '').slice(0, 10);
+  proximaDoseInput.value = marcarComoAplicada ? '' : String(item.proximaDose || '').slice(0, 10);
+  loteInput.value = item.lote || '';
+  fabricanteInput.value = item.fabricante || '';
+  vacinaLocalInput.value = item.local || '';
+  vacinaVetInput.value = item.veterinario || '';
+  vacinaObsInput.value = item.observacoes || '';
+
+  atualizarModoVacina();
+  vaccineDialog.showModal();
+  if (marcarComoAplicada) vacinaLocalInput.focus();
+}
+
+statusAplicadaRadio.addEventListener('change', () => {
+  limparErrosVacina();
+  if (!dataAplicacaoInput.value) dataAplicacaoInput.value = getHojeISO();
+  atualizarModoVacina();
+});
+
+statusPendenteRadio.addEventListener('change', () => {
+  limparErrosVacina();
+  atualizarModoVacina();
+});
+
+proximaDoseInput.addEventListener('change', () => {
+  if (getStatusVacina() === 'pendente') atualizarPreviewVacinaPendente();
+});
+
+vaccineForm.addEventListener('input', (event) => {
+  if (event.target.getAttribute('aria-invalid') === 'true') {
+    event.target.removeAttribute('aria-invalid');
+  }
+});
+
+vaccineClose.addEventListener('click', () => vaccineDialog.close());
+vaccineDialog.addEventListener('click', (event) => {
+  if (event.target === vaccineDialog) vaccineDialog.close();
+});
+
+document.addEventListener('click', (event) => {
+  const detalheBtn = event.target.closest('[data-action="vacina-detalhes"]');
+  if (detalheBtn && detalheBtn.dataset.id) {
+    abrirModalVacina(detalheBtn.dataset.id, false);
+    return;
+  }
+
+  const aplicarBtn = event.target.closest('[data-action="vacina-aplicar"]');
+  if (aplicarBtn && aplicarBtn.dataset.id) {
+    abrirModalVacina(aplicarBtn.dataset.id, true);
+  }
+});
+
+vaccineForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!editingVacinaId) return;
+  limparErrosVacina();
+
+  const status = getStatusVacina();
+  const titulo = vacinaTituloInput.value.trim();
+  const dose = vacinaDoseSelect.value;
+  const dataAplicacao = dataAplicacaoInput.value;
+  const proximaDose = proximaDoseInput.value;
+  const lote = loteInput.value.trim();
+  const fabricante = fabricanteInput.value.trim();
+  const local = vacinaLocalInput.value.trim();
+  const veterinario = vacinaVetInput.value.trim();
+  const observacoes = vacinaObsInput.value.trim();
+  const hoje = getHojeISO();
+
+  if (titulo.length < 2) {
+    mostrarErroVacina('Informe o nome da vacina.', vacinaTituloInput);
+    return;
+  }
+  if (!dose) {
+    mostrarErroVacina('Selecione a dose.', vacinaDoseSelect);
+    return;
+  }
+
+  if (status === 'aplicada') {
+    if (!dataAplicacao) {
+      mostrarErroVacina('Informe a data da aplicação.', dataAplicacaoInput);
+      return;
+    }
+    if (dataAplicacao > hoje) {
+      mostrarErroVacina('A data da aplicação não pode estar no futuro.', dataAplicacaoInput);
+      return;
+    }
+    if (proximaDose && proximaDose < dataAplicacao) {
+      mostrarErroVacina('A próxima dose não pode ser anterior à data da aplicação.', proximaDoseInput);
+      return;
+    }
+    if (local.length < 2) {
+      mostrarErroVacina('Informe a clínica ou o local da aplicação.', vacinaLocalInput);
+      return;
+    }
+    if (veterinario.length < 2) {
+      mostrarErroVacina('Informe o médico veterinário responsável.', vacinaVetInput);
+      return;
+    }
+  } else if (!proximaDose) {
+    mostrarErroVacina('Informe a data esperada para agendar a dose.', proximaDoseInput);
+    return;
+  }
+
+  const petId = sessionStorage.getItem('activePetId');
+  const payload = {
+    status,
+    titulo,
+    dose,
+    dataAplicacao: status === 'aplicada' ? dataAplicacao : '',
+    proximaDose,
+    lote: status === 'aplicada' ? lote : '',
+    fabricante: status === 'aplicada' ? fabricante : '',
+    local,
+    veterinario,
+    observacoes,
+  };
+
+  vaccineSaveBtn.disabled = true;
+  try {
+    const response = await fetch(`/api/pets/${petId}/vacinas/${editingVacinaId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroVacina(resData.message || 'Erro ao atualizar vacina.');
+      return;
+    }
+
+    vaccineDialog.close();
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroVacina('Erro de comunicação com o servidor.');
+  } finally {
+    vaccineSaveBtn.disabled = false;
+  }
+});
+
+vaccineDeleteBtn.addEventListener('click', async () => {
+  if (!editingVacinaId) return;
+  if (!window.confirm('Deseja realmente excluir este registro de vacina?')) return;
+
+  vaccineError.hidden = true;
+  const petId = sessionStorage.getItem('activePetId');
+  vaccineDeleteBtn.disabled = true;
+
+  try {
+    const response = await fetch(`/api/pets/${petId}/vacinas/${editingVacinaId}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroVacina(resData.message || 'Erro ao excluir vacina.');
+      return;
+    }
+
+    vaccineDialog.close();
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroVacina('Erro de comunicação com o servidor.');
+  } finally {
+    vaccineDeleteBtn.disabled = false;
   }
 });
 
