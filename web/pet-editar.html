@@ -1,0 +1,219 @@
+<!-- Autoria: Maria Júlia Souza de Oliveira-->
+<!-- RA: 25007909 -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar pet | PetHealth</title>
+
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/inicial.css">
+  <link rel="stylesheet" href="css/consultas.css">
+  <link rel="stylesheet" href="css/perfil.css">
+  <link rel="stylesheet" href="css/pet-editar.css">
+</head>
+
+<body class="painel-page pet-editar-page">
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <span class="app-header__brand">PetHealth</span>
+      <nav aria-label="Retorno">
+        <a href="perfil.html" class="app-header__link">Voltar ao perfil</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+
+    <!-- Mensagens de estado -->
+    <div id="loading-state" class="empty">Carregando dados do pet...</div>
+
+    <div id="error-state" class="empty" hidden>
+      <p class="error-text" id="error-message">Não foi possível carregar os dados do pet.</p>
+      <div class="error-actions">
+        <a href="perfil.html" class="btn btn--sm">Voltar ao perfil</a>
+        <button type="button" class="btn btn--outline btn--sm" id="retry-btn" hidden>Tentar novamente</button>
+      </div>
+    </div>
+
+    <!-- Conteúdo da tela -->
+    <div id="pet-content" hidden>
+
+      <section class="painel-top profile-header" aria-labelledby="pet-title-name">
+        <div class="profile-identity">
+          <div class="profile-avatar" aria-hidden="true">
+            <img id="pet-avatar-img" class="profile-avatar__img" alt="" hidden>
+            <span id="pet-avatar-icon" class="pet-avatar-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <ellipse cx="6" cy="10" rx="2" ry="2.8" />
+                <ellipse cx="10" cy="5.8" rx="2" ry="2.8" />
+                <ellipse cx="14" cy="5.8" rx="2" ry="2.8" />
+                <ellipse cx="18" cy="10" rx="2" ry="2.8" />
+                <path
+                  d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" />
+              </svg>
+            </span>
+          </div>
+          <div class="profile-identity__text">
+            <h1 id="pet-title-name"></h1>
+            <p class="subtitle" id="pet-subtitle"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="painel-grid">
+
+        <!-- Coluna principal -->
+        <div class="painel-main">
+          <section class="painel-section" aria-labelledby="pet-data-title">
+            <article class="card card--neutral profile-card">
+              <h2 id="pet-data-title">Dados do pet</h2>
+
+              <form id="pet-form" novalidate>
+                <div id="pet-error" class="alert" role="alert" hidden></div>
+                <div id="pet-success" class="alert alert--success" role="status" hidden></div>
+
+                <div class="field">
+                  <label for="pet-name">Nome do pet</label>
+                  <input type="text" id="pet-name" name="nome" maxlength="50" required>
+                </div>
+
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="pet-species">Espécie</label>
+                    <select id="pet-species" name="especie" required>
+                      <option value="">Selecione</option>
+                      <option value="cachorro">Cachorro</option>
+                      <option value="gato">Gato</option>
+                      <option value="outro">Outro</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="pet-breed">Raça <span class="optional">(opcional)</span></label>
+                    <input type="text" id="pet-breed" name="raca" maxlength="50" placeholder="Ex.: SRD, Poodle">
+                  </div>
+                </div>
+
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="pet-birth">Data de nascimento</label>
+                    <input type="date" id="pet-birth" name="dataNascimento" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="pet-sex">Sexo <span class="optional">(opcional)</span></label>
+                    <select id="pet-sex" name="sexo">
+                      <option value="">Não informado</option>
+                      <option value="femea">Fêmea</option>
+                      <option value="macho">Macho</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-grid field-grid--3">
+                  <div class="field">
+                    <label for="pet-weight">Peso (kg)</label>
+                    <input type="number" id="pet-weight" name="peso" min="0.1" max="200" step="0.1" inputmode="decimal"
+                      required>
+                  </div>
+
+                  <div class="field">
+                    <label for="pet-length">Comprimento (cm) <span class="optional">(opcional)</span></label>
+                    <input type="number" id="pet-length" name="comprimentoCm" min="0.1" max="300" step="0.1"
+                      inputmode="decimal" placeholder="Ex.: 65">
+                  </div>
+
+                  <div class="field">
+                    <label for="pet-height">Altura (cm) <span class="optional">(opcional)</span></label>
+                    <input type="number" id="pet-height" name="alturaCm" min="0.1" max="300" step="0.1"
+                      inputmode="decimal" placeholder="Ex.: 48">
+                  </div>
+                </div>
+
+                <div class="card__actions">
+                  <button type="submit" class="btn btn--sm" id="pet-save">Salvar alterações</button>
+                  <a href="perfil.html" class="btn btn--sm btn--outline">Cancelar</a>
+                </div>
+              </form>
+            </article>
+          </section>
+        </div>
+
+        <!-- Coluna lateral -->
+        <aside class="painel-side">
+
+          <section class="painel-section" aria-labelledby="photo-title">
+            <article class="card card--neutral profile-card">
+              <h2 id="photo-title">Foto do pet</h2>
+
+              <form id="photo-form" class="doc-upload" novalidate>
+                <div id="photo-error" class="alert" role="alert" hidden></div>
+                <div id="photo-success" class="alert alert--success" role="status" hidden></div>
+
+                <label for="photo-input">Escolher imagem</label>
+                <input type="file" id="photo-input" name="foto" accept="image/jpeg,image/png,image/webp">
+                <p class="hint">JPEG, PNG ou WebP, até 2 MB.</p>
+
+                <div class="card__actions">
+                  <button type="submit" class="btn btn--sm" id="photo-save">Enviar foto</button>
+                  <button type="button" class="btn btn--sm btn--outline" id="photo-remove" hidden>Remover foto</button>
+                </div>
+              </form>
+            </article>
+          </section>
+
+          <section class="painel-section" aria-labelledby="danger-title">
+            <article class="card card--danger profile-card">
+              <h2 id="danger-title" class="card__title">Zona de perigo</h2>
+              <p class="card__meta">
+                Excluir este pet apaga permanentemente todas as vacinas, medicamentos, consultas, exames e arquivos
+                vinculados a ele.
+              </p>
+              <div class="card__actions">
+                <button type="button" class="btn btn--sm btn--danger" id="delete-pet-btn">Excluir pet</button>
+              </div>
+            </article>
+          </section>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Diálogo de confirmação de exclusão do pet -->
+  <dialog class="doc-dialog delete-dialog" id="delete-dialog" aria-labelledby="delete-title">
+    <div class="doc-dialog__head">
+      <h2 id="delete-title">Excluir pet</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="delete-close">Fechar</button>
+    </div>
+    <p class="subtitle">
+      Esta ação é permanente. Todas as vacinas, medicamentos, consultas e exames deste pet também serão apagados.
+    </p>
+
+    <form id="delete-form" novalidate>
+      <div id="delete-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="delete-confirm-name" id="delete-confirm-label">Digite o nome do pet para confirmar</label>
+        <input type="text" id="delete-confirm-name" autocomplete="off" required>
+      </div>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm btn--danger" id="delete-submit" disabled>Excluir pet
+          definitivamente</button>
+        <button type="button" class="btn btn--sm btn--outline" id="delete-cancel">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/pet-editar.js"></script>
+</body>
+
+</html>

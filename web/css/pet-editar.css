@@ -1,0 +1,65 @@
+/*
+* Autoria: Maria Júlia Souza de Oliveira
+* RA: 25007909
+*/
+
+/* Ícone de patinha no avatar quando o pet não tem foto */
+.pet-avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-avatar-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.pet-avatar-icon[hidden] {
+  display: none;
+}
+
+/* Grade de campos do formulário */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.field-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.field-grid .field {
+  margin-bottom: 0;
+}
+
+.field select[aria-invalid="true"] {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+}
+
+/* Ações no estado de erro */
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .pet-editar-page .painel-side {
+    order: 0;
+  }
+
+  .field-grid,
+  .field-grid--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .pet-avatar-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+}
