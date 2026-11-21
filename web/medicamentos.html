@@ -1,0 +1,79 @@
+<!-- Tela: Controle de Medicamentos | PetHealth -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Medicamentos | PetHealth</title>
+<link rel="stylesheet" href="css/medicamentos.css">
+</head>
+<body>
+<header class="hd"><div class="hd__in">
+  <a class="brand" href="#">PetHealth</a>
+  <nav aria-label="Principal"><ul class="nav">
+    <li><a href="#">Início</a></li><li><a href="#">Consultas</a></li><li><a href="#">Vacinas</a></li>
+    <li><a href="#" aria-current="page">Medicamentos</a></li><li><a href="#">Perfil</a></li><li><a href="#">Sair</a></li>
+  </ul></nav>
+</div></header>
+
+<main>
+  <section class="top">
+    <div>
+      <h1>Controle de Medicamentos</h1>
+      <p class="sub" id="pet-sub"></p>
+    </div>
+    <div class="sw">
+      <span id="swl">Mudar de pet</span>
+      <div class="sw__l" role="group" aria-labelledby="swl">
+        <button class="pet" data-pet="Thor" aria-pressed="true" aria-label="Thor, cachorro">🐶</button>
+        <button class="pet" data-pet="Mia" aria-pressed="false" aria-label="Mia, gata">🐱</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div>
+      <h2 id="hoje"></h2>
+      <div class="today" id="today"></div>
+      <h2>Plano Atual</h2>
+      <div id="plan"></div>
+    </div>
+    <aside aria-labelledby="sv">
+      <h2 id="sv">Medicamentos Salvos</h2>
+      <button class="btn btn--o btn--lg" id="add">+ Adicionar Medicamento</button>
+      <div id="saved"></div>
+    </aside>
+  </div>
+</main>
+
+<dialog id="dlg" aria-labelledby="dt">
+  <h2 id="dt">Registrar Medicamento</h2>
+  <form id="form" novalidate>
+    <div class="alert" id="err" role="alert" hidden></div>
+    <div class="f"><label for="farm">Nome de Farmácia</label><input type="text" id="farm" maxlength="100" placeholder="Ex.: Dipirona Gotas"></div>
+    <div class="chk"><input type="checkbox" id="incsal" checked><label for="incsal" style="margin:0;font-weight:400">Incluir nome da droga/sal?</label></div>
+    <div class="f" id="salf"><label for="sal">Nome do Medicamento</label><input type="text" id="sal" maxlength="100" placeholder="Ex.: Dipirona sódica"></div>
+    <span class="lbl">Tipo e Dosagem</span>
+    <div class="cols">
+      <div class="f"><label for="fmt">Formato</label><select id="fmt"><option>Comprimido</option><option>Líquido</option><option>Cápsula</option><option>Pomada</option><option>Injeção</option></select></div>
+      <div class="f"><label for="dos">Dosagem</label><input type="number" id="dos" min="0" step="any" placeholder="150"></div>
+      <div class="f"><label for="uni">Unidade</label><select id="uni"><option>mg</option><option>ml</option><option>g</option><option>gotas</option></select></div>
+    </div>
+    <span class="lbl">Frequência</span>
+    <div class="cols" style="align-items:flex-end">
+      <div class="f" style="flex:2 1 200px"><select id="freq" aria-label="Frequência"><option value="dia">Todos os dias</option><option value="sem" selected>Em dias específicos da semana</option></select></div>
+      <div class="f" style="flex:1 1 90px"><label for="hor">às</label><input type="time" id="hor" value="10:00"></div>
+      <div class="chk" style="margin-bottom:18px"><input type="checkbox" id="semh"><label for="semh" style="margin:0;font-weight:400">Sem horário</label></div>
+    </div>
+    <div class="days" id="days" role="group" aria-label="Dias da semana"></div>
+    <div class="cols">
+      <div class="f"><label for="ini">Início</label><select id="ini" disabled><option>Hoje</option></select></div>
+      <div class="f"><label for="fim">Fim</label><select id="fim"><option value="0">Uso contínuo</option><option value="7">Em 7 dias</option><option value="15">Em 15 dias</option><option value="30">Em 30 dias</option></select></div>
+    </div>
+    <div class="foot"><button type="button" class="link" id="cancel">Cancelar</button><button type="submit" class="btn btn--lg">Salvar</button></div>
+  </form>
+</dialog>
+
+<script src="js/medicamentos.js"></script>
+</body>
+</html>
