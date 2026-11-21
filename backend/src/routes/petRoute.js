@@ -37,6 +37,15 @@ import {
   baixarDocumentoVacina,
   uploadVacinaMiddleware
 } from '../controllers/vacinaController.js';
+import {
+  listarMedicamentos,
+  criarMedicamento,
+  atualizarMedicamento,
+  alterarStatusMedicamento,
+  excluirMedicamento,
+  registrarDose,
+  desfazerDose
+} from '../controllers/medicamentoController.js';
 
 const router = express.Router();
 
@@ -69,5 +78,14 @@ router.delete('/:petId/vacinas/:vacinaId', requireAuth, excluirVacina);
 router.get('/:petId/vacinas/:vacinaId/documentos', requireAuth, listarDocumentosVacina);
 router.post('/:petId/vacinas/:vacinaId/documentos', requireAuth, uploadVacinaMiddleware, enviarDocumentosVacina);
 router.get('/:petId/vacinas/:vacinaId/documentos/:docId/arquivo', requireAuth, baixarDocumentoVacina);
+
+// Medicamentos e registro de doses
+router.get('/:petId/medicamentos', requireAuth, listarMedicamentos);
+router.post('/:petId/medicamentos', requireAuth, criarMedicamento);
+router.put('/:petId/medicamentos/:medicamentoId', requireAuth, atualizarMedicamento);
+router.put('/:petId/medicamentos/:medicamentoId/status', requireAuth, alterarStatusMedicamento);
+router.delete('/:petId/medicamentos/:medicamentoId', requireAuth, excluirMedicamento);
+router.post('/:petId/medicamentos/:medicamentoId/doses', requireAuth, registrarDose);
+router.delete('/:petId/medicamentos/:medicamentoId/doses', requireAuth, desfazerDose);
 
 export default router;

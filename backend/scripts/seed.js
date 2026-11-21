@@ -223,26 +223,74 @@ async function runSeed() {
         petId: petLunaId,
         ownerId,
         medicamento: 'Amoxicilina',
+        principioAtivo: 'Amoxicilina',
         formato: 'Comprimido',
-        dose: '1 comp',
+        dosagem: 1,
+        unidade: 'comprimido',
+        dose: '1 comprimido',
         horarios: ['08:00', '20:00'],
         diasDaSemana: [0, 1, 2, 3, 4, 5, 6],
         dataInicio: getDateOffset(-5),
-        status: 'ativo'
+        dataFim: null,
+        status: 'ativo',
+        criadoEm: agora
       },
       {
         petId: petLunaId,
         ownerId,
         medicamento: 'Dipirona',
-        formato: 'Gota',
+        principioAtivo: 'Dipirona sódica',
+        formato: 'Gotas',
+        dosagem: 10,
+        unidade: 'gotas',
         dose: '10 gotas',
         horarios: ['12:00'],
         diasDaSemana: [0, 1, 2, 3, 4, 5, 6],
         dataInicio: getDateOffset(-20),
         dataFim: getDateOffset(-10),
-        status: 'concluido'
+        status: 'concluido',
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        medicamento: 'Suplemento articular',
+        formato: 'Cápsula',
+        dosagem: 1,
+        unidade: 'cápsula',
+        dose: '1 cápsula',
+        horarios: ['18:00'],
+        diasDaSemana: [1, 3, 5],
+        dataInicio: getDateOffset(-30),
+        dataFim: null,
+        status: 'ativo',
+        criadoEm: agora
+      },
+      {
+        petId: petLunaId,
+        ownerId,
+        medicamento: 'Colírio',
+        formato: 'Gotas',
+        dosagem: 2,
+        unidade: 'gotas',
+        dose: '2 gotas',
+        horarios: ['12:00'],
+        diasDaSemana: [0, 1, 2, 3, 4, 5, 6],
+        dataInicio: getDateOffset(-100),
+        dataFim: getDateOffset(-90),
+        status: 'arquivado',
+        criadoEm: agora
       }
     ]);
+
+    // Log de dose tomada hoje (Amoxicilina 08:00)
+    await db.collection('medicationLogs').insertOne({
+      petId: petLunaId,
+      medicationId: medicamentosRes.insertedIds[0],
+      data: hojeSP,
+      horario: '08:00',
+      tomadoEm: agora
+    });
 
     // 6. Consultas (Luna)
     const consultasRes = await db.collection('consultations').insertMany([
@@ -345,6 +393,8 @@ async function runSeed() {
     // 7. Índices de Otimização
     await db.collection('vaccines').createIndex({ petId: 1 });
     await db.collection('medications').createIndex({ ownerId: 1 });
+    await db.collection('medications').createIndex({ petId: 1, status: 1 });
+    await db.collection('medicationLogs').createIndex({ petId: 1, data: 1 });
     await db.collection('consultations').createIndex({ petId: 1, data: -1 });
 
     console.log(
