@@ -47,7 +47,6 @@ export async function excluirDadosDosPets(db, petIds) {
     db.collection("medications").deleteMany({ petId: { $in: ids } }),
     db.collection("medicationLogs").deleteMany({ petId: { $in: ids } }),
     db.collection("consultations").deleteMany({ petId: { $in: ids } }),
-    db.collection("exams").deleteMany({ petId: { $in: ids } }),
   ]);
 
   // Remove fotos dos pets no GridFS, se houver

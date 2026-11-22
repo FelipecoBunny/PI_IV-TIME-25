@@ -225,7 +225,6 @@ export const criarVacina = async (req, res) => {
 
     const novaVacina = {
       petId: pet._id,
-      ownerId: new ObjectId(req.session.userId),
       ...dados,
       documentos: [],
       criadoEm: new Date(),
@@ -279,7 +278,10 @@ export const atualizarVacina = async (req, res) => {
       "observacoes",
     ];
 
-    const $set = { ...dados };
+    const $set = {
+      ...dados,
+      atualizadoEm: new Date(),
+    };
     const $unset = {};
     for (const campo of camposOpcionais) {
       if (!(campo in dados)) {
