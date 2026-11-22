@@ -121,7 +121,7 @@
   gap: 6px;
 }
 
-.btn--icon svg {
+.btn--icon .icon {
   width: 14px;
   height: 14px;
 }

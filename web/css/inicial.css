@@ -110,7 +110,7 @@
   cursor: pointer;
 }
 
-.pet-avatar svg {
+.pet-avatar .icon {
   width: 22px;
   height: 22px;
 }

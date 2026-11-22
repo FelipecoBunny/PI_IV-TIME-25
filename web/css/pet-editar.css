@@ -10,7 +10,7 @@
   justify-content: center;
 }
 
-.pet-avatar-icon svg {
+.pet-avatar-icon .icon {
   width: 34px;
   height: 34px;
 }
@@ -58,7 +58,7 @@
     grid-template-columns: 1fr;
   }
 
-  .pet-avatar-icon svg {
+  .pet-avatar-icon .icon {
     width: 28px;
     height: 28px;
   }

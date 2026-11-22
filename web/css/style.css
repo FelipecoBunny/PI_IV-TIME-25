@@ -107,7 +107,7 @@ a:hover {
   outline-offset: -2px;
 }
 
-.toggle-password svg {
+.toggle-password .icon {
   width: 20px;
   height: 20px;
 }
@@ -154,4 +154,69 @@ a:hover {
   background: var(--color-danger-soft);
   border: 1px solid var(--color-danger);
   border-radius: 6px;
+}
+
+/* Ícones personalizados */
+.icon {
+  display: inline-block;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  -webkit-mask-image: var(--icon);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--icon);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.icon--paw {
+  --icon: url("../assets/paw.svg");
+}
+
+.icon--calendar {
+  --icon: url("../assets/calendar.svg");
+}
+
+.icon--clock {
+  --icon: url("../assets/clock.svg");
+}
+
+.icon--alert {
+  --icon: url("../assets/alert.svg");
+}
+
+.icon--check {
+  --icon: url("../assets/check.svg");
+}
+
+.icon--med-active {
+  --icon: url("../assets/med-active.svg");
+}
+
+.icon--check-circle {
+  --icon: url("../assets/check-circle.svg");
+}
+
+.icon--archive {
+  --icon: url("../assets/archive.svg");
+}
+
+.icon--eye {
+  --icon: url("../assets/eye.svg");
+}
+
+.icon--eye-off {
+  --icon: url("../assets/eye-off.svg");
+}
+
+.icon--search {
+  --icon: url("../assets/search.svg");
+}
+
+.icon--filter {
+  --icon: url("../assets/filter.svg");
 }
