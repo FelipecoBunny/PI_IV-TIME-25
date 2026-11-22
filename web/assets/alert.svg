@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>alert</title>
+    <g id="alert" stroke="none" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-width="1">
+        <g id="Group" transform="translate(3, 3.5)" stroke="#000000">
+            <line x1="8.99989643" y1="6.29586635" x2="8.99989643" y2="9.50710644" id="Path" stroke-width="2"></line>
+            <line x1="8.99989643" y1="12.7183465" x2="8.99989643" y2="12.7063579" id="Path" stroke-width="2"></line>
+            <path d="M7.17120574,1.10115029 L0.266282243,13.8194808 C-0.50840603,15.2464488 0.499915733,17 2.09509846,17 L15.9049245,17 C17.500034,17 18.5084186,15.2464488 17.7337198,13.8194808 L10.8287963,1.10115029 C10.0317123,-0.367050095 7.96828977,-0.367050095 7.17120574,1.10115029 Z" id="Path" stroke-width="2" stroke-linejoin="round"></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>eye</title>
+    <g id="eye" stroke="none" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1">
+        <g id="eye-svgrepo-com" transform="translate(1, 1)" stroke="#000000">
+            <g id="Group" transform="translate(2.2541, 4.5833)">
+                <path d="M11.4965767,6.41666667 C11.4965767,7.93549167 10.2654017,9.16666667 8.74657667,9.16666667 C7.22784333,9.16666667 5.99660417,7.93549167 5.99660417,6.41666667 C5.99660417,4.89784167 7.22784333,3.66666667 8.74657667,3.66666667 C10.2654017,3.66666667 11.4965767,4.89784167 11.4965767,6.41666667 Z" id="Path" stroke-width="2"></path>
+                <path d="M8.747035,0 C4.64251333,0 1.16809,2.69764 0,6.41666667 C1.16807167,10.135675 4.64251333,12.8333333 8.747035,12.8333333 C12.8515017,12.8333333 16.3259433,10.135675 17.4940517,6.41666667 C16.3259433,2.6976675 12.8515017,0 8.747035,0 Z" id="Path" stroke-width="2"></path>
+            </g>
+        </g>
+    </g>
+</svg>

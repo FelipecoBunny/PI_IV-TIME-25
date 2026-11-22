@@ -4,13 +4,11 @@
 * Integração e Lógica: Felipe Nasser Coelho Moussa | RA: 25004922
 */
 
-const pawSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="6" cy="10" rx="2" ry="2.8" /><ellipse cx="10" cy="5.8" rx="2" ry="2.8" /><ellipse cx="14" cy="5.8" rx="2" ry="2.8" /><ellipse cx="18" cy="10" rx="2" ry="2.8" /><path d="M12 11c-3 0-5.5 3-5.5 5.4 0 1.6 1.3 2.6 2.9 2.6 1 0 1.8-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1 2.9-2.6C17.5 14 15 11 12 11z" /></svg>`;
-
-const calendarSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>`;
-
-const clockSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>`;
-
-const alertSvg = `<svg class="card__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 1.5 21h21L12 3zm0 6 6.9 12H5.1L12 9zm-1 3v4h2v-4h-2zm0 5v2h2v-2h-2z" /></svg>`;
+// Ícones personalizados
+const pawSvg = `<span class="icon icon--paw" aria-hidden="true"></span>`;
+const calendarSvg = `<span class="icon icon--calendar card__icon" aria-hidden="true"></span>`;
+const clockSvg = `<span class="icon icon--clock card__icon" aria-hidden="true"></span>`;
+const alertSvg = `<span class="icon icon--alert card__icon" aria-hidden="true"></span>`;
 
 // Elementos
 const loadingState = document.getElementById('loading-state');

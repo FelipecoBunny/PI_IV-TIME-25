@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>check_circle</title>
+    <g id="check_circle" stroke="none" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1">
+        <g id="Group" transform="translate(3, 3)" stroke="#000000">
+            <path d="M0,8.99972845 C0.000308555674,4.70631311 3.03341083,1.01101535 7.24437296,0.173691885 C11.4553865,-0.663618728 15.6714141,1.5902469 17.3142159,5.55693008 C18.9570178,9.52362612 17.5690315,14.0983134 13.9990423,16.4834299 C10.4290532,18.8685464 5.67134328,18.399674 2.63557971,15.3636388 C0.94788303,13.6757241 0,11.3866448 0,8.99972845 Z" id="Path" stroke-width="2"></path>
+            <polyline id="Path" stroke-width="2" points="4.49977024 8.99972845 7.49918852 11.999123 13.4993107 6.00038536"></polyline>
+        </g>
+    </g>
+</svg>
