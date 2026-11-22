@@ -814,7 +814,7 @@ document.addEventListener('click', (event) => {
   }
 });
 
-// ---------- Carregamento ----------
+// Carregamento
 async function carregarMedicamentosDoPet(petId) {
   loadingState.hidden = false;
   errorState.hidden = true;
@@ -831,16 +831,56 @@ async function carregarMedicamentosDoPet(petId) {
   }
 }
 
+// Imagem do Tutor
+function renderizarAvatarTutor(user) {
+  const link = document.getElementById('tutor-avatar');
+  const img = document.getElementById('tutor-avatar-img');
+  const initialsEl = document.getElementById('tutor-avatar-initials');
+  if (!link || !img || !initialsEl) return;
+
+  const partes = String(user?.name || '').trim().split(/\s+/).filter(Boolean);
+  const iniciais = partes.length === 0
+    ? '?'
+    : partes.length === 1
+      ? partes[0].slice(0, 2).toUpperCase()
+      : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+
+  initialsEl.textContent = iniciais;
+  const rotulo = user?.name ? `Perfil de ${user.name}` : 'Meu perfil';
+  link.title = rotulo;
+  link.setAttribute('aria-label', rotulo);
+
+  img.addEventListener('error', () => {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  });
+
+  if (user?.temFoto) {
+    img.src = `/api/auth/me/foto?v=${Date.now()}`;
+    img.hidden = false;
+    initialsEl.hidden = true;
+  } else {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  }
+}
+
 async function inicializarAplicacao() {
   try {
-    const pets = await fetchAPI('/api/pets');
+    // Busca pets e dados do tutor
+    const [pets, user] = await Promise.all([
+      fetchAPI('/api/pets'),
+      fetchAPI('/api/auth/me').catch(() => null),
+    ]);
 
+    // Sem pets
     if (pets.length === 0) {
-      window.location.href = 'cadastro-pet.html';
+      window.location.href = "cadastro-pet.html";
       return;
     }
 
-    petSwitcherContainer.hidden = pets.length === 1;
+    // Caixa dos Pets
+    renderizarAvatarTutor(user);
     petListEl.innerHTML = '';
 
     let activePetId = sessionStorage.getItem('activePetId');
@@ -849,6 +889,7 @@ async function inicializarAplicacao() {
       sessionStorage.setItem('activePetId', activePetId);
     }
 
+    const cacheBust = Date.now();
     pets.forEach((pet) => {
       const isActive = pet._id === activePetId;
       const btn = document.createElement('button');
@@ -857,7 +898,20 @@ async function inicializarAplicacao() {
       btn.title = pet.nome;
       btn.setAttribute('aria-label', pet.nome);
       btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-      btn.innerHTML = pawSvg;
+
+      // Usa a foto do pet quando existir, com fallback para o ícone de patinha
+      if (pet.temFoto) {
+        const img = document.createElement('img');
+        img.className = 'pet-avatar__img';
+        img.src = `/api/pets/${encodeURIComponent(pet._id)}/foto?v=${cacheBust}`;
+        img.alt = '';
+        img.addEventListener('error', () => {
+          btn.innerHTML = pawSvg;
+        });
+        btn.appendChild(img);
+      } else {
+        btn.innerHTML = pawSvg;
+      }
 
       btn.addEventListener('click', () => {
         if (pet._id === sessionStorage.getItem('activePetId')) return;

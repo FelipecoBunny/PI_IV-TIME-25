@@ -74,7 +74,7 @@
 /* Cartões de medicamentos salvos (coluna lateral) */
 .saved-card--ativo {
   background: var(--color-success-soft);
-  border-color: var(--color-success);
+  border-color: var(--color-success-border);
 }
 
 .saved-card--ativo .card__label,
@@ -82,9 +82,31 @@
   color: var(--color-success);
 }
 
+.saved-card--ativo .btn:not(:disabled) {
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.saved-card--ativo .btn:not(:disabled):hover {
+  background: var(--color-success-hover);
+  border-color: var(--color-success-hover);
+}
+
+.saved-card--ativo .btn--outline:not(:disabled) {
+  color: var(--color-success);
+  background: var(--color-surface);
+  border-color: var(--color-success);
+}
+
+.saved-card--ativo .btn--outline:not(:disabled):hover {
+  color: var(--color-success-hover);
+  background: var(--color-success-soft);
+  border-color: var(--color-success-hover);
+}
+
 .saved-card--concluido {
   background: var(--color-primary-soft);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-border);
 }
 
 .saved-card--concluido .card__label,

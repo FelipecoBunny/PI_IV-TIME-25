@@ -18,7 +18,8 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--color-primary);
-  border-radius: 8px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(43, 52, 64, 0.05);
 }
 
 .brand {
@@ -43,4 +44,69 @@
   font-size: 0.9rem;
   text-align: center;
   color: var(--color-text-muted);
+}
+
+.field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.field__head label {
+  margin-bottom: 0;
+}
+
+.auth-forgot {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.alert--success {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+  border-color: var(--color-success-border);
+}
+
+.code-input {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-align: center;
+}
+
+.auth-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  font-size: 0.875rem;
+}
+
+.auth-link-btn {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.auth-link-btn:hover:not(:disabled) {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.auth-link-btn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.auth-link-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

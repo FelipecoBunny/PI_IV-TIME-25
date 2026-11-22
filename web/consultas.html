@@ -20,17 +20,36 @@
 
   <header class="app-header">
     <div class="app-header__inner">
-      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <a href="inicial.html" class="app-header__brand">
+        <img src="assets/logo.png" alt="PetHealth" class="app-header__logo">
+      </a>
       <nav aria-label="Principal">
         <ul class="app-nav">
-          <li><a href="inicial.html" class="app-header__link">Início</a></li>
-          <li><a href="consultas.html" class="app-header__link" aria-current="page">Consultas</a></li>
-          <li><a href="vacinas.html" class="app-header__link">Vacinas</a></li>
-          <li><a href="medicamentos.html" class="app-header__link">Medicamentos</a></li>
-          <li><a href="perfil.html" class="app-header__link">Perfil</a></li>
-          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
+          <li>
+            <a href="inicial.html" class="app-header__link">
+              <span class="icon icon--home" aria-hidden="true"></span>
+              Início
+            </a>
+          </li>
+          <li>
+            <a href="consultas.html" class="app-header__link" aria-current="page">
+              <span class="icon icon--form" aria-hidden="true"></span>
+              Consultas
+            </a>
+          </li>
+          <li>
+            <a href="vacinas.html" class="app-header__link">
+              <span class="icon icon--needle" aria-hidden="true"></span>
+              Vacinas
+            </a>
+          </li>
+          <li>
+            <a href="medicamentos.html" class="app-header__link">
+              <span class="icon icon--med-active" aria-hidden="true"></span>
+              Medicamentos
+            </a>
+          </li>
         </ul>
-
       </nav>
     </div>
   </header>
@@ -58,8 +77,15 @@
         </div>
 
         <div class="pet-switcher" id="pet-switcher-container">
-          <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
-          <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+          <span class="pet-switcher__label" id="pet-switcher-label">Meus Pets</span>
+          <div class="pet-switcher__box">
+            <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+            </div>
+            <span class="pet-switcher__divider" aria-hidden="true"></span>
+            <a href="perfil.html" class="tutor-avatar" id="tutor-avatar" aria-label="Meu perfil" title="Meu perfil">
+              <img class="tutor-avatar__img" id="tutor-avatar-img" alt="" hidden>
+              <span class="tutor-avatar__initials" id="tutor-avatar-initials" aria-hidden="true"></span>
+            </a>
           </div>
         </div>
       </section>
@@ -247,7 +273,6 @@
     </form>
   </dialog>
 
-  <script src="js/logout.js"></script>
   <script src="js/consultas.js"></script>
 </body>
 

@@ -8,6 +8,8 @@ import multer from "multer";
 import { GridFSBucket, ObjectId } from "mongodb";
 import { getDatabase } from "../config/database.js";
 import { excluirDadosDosPets } from "../services/petCleanupService.js";
+import crypto from "node:crypto";
+import { sendPasswordResetEmail } from "../services/emailService.js";
 
 const PHOTO_BUCKET = "fotosPerfil";
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2 MB
@@ -448,5 +450,147 @@ export const deleteAccount = async (req, res) => {
   } catch (error) {
     console.error("[AuthController] Erro ao excluir conta:", error);
     res.status(500).json({ message: "Erro interno ao excluir conta." });
+  }
+};
+
+const RESET_CODE_TTL_MS = 15 * 60 * 1000; // 15 minutos
+const RESET_COOLDOWN_MS = 60 * 1000; // 60 segundos entre reenvios
+const MAX_RESET_ATTEMPTS = 5;
+
+function hashResetCode(email, code) {
+  const secret = process.env.SESSION_SECRET || "pethealth-reset";
+  return crypto.createHmac("sha256", secret).update(`${email}:${code}`).digest("hex");
+}
+
+function hashesIguais(hexA, hexB) {
+  const bufA = Buffer.from(String(hexA || ""), "hex");
+  const bufB = Buffer.from(String(hexB || ""), "hex");
+  if (bufA.length === 0 || bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+export const requestPasswordReset = async (req, res) => {
+  try {
+    const emailBruto = req.body?.email;
+    if (!emailBruto || typeof emailBruto !== "string" || !isValidEmail(emailBruto.trim())) {
+      return res.status(400).json({ message: "Informe um e-mail válido." });
+    }
+
+    const email = emailBruto.trim().toLowerCase();
+    const respostaGenerica = {
+      message: "Se o e-mail estiver cadastrado, enviamos um código de 6 dígitos.",
+    };
+
+    const db = getDatabase();
+    const user = await db.collection("users").findOne(
+      { email },
+      { projection: { _id: 1, name: 1, email: 1 } }
+    );
+
+    // Resposta genérica para não expor quais e-mails existem no banco
+    if (!user) {
+      return res.json(respostaGenerica);
+    }
+
+    const existente = await db.collection("passwordResets").findOne({ email });
+    if (
+      existente?.createdAt &&
+      Date.now() - new Date(existente.createdAt).getTime() < RESET_COOLDOWN_MS
+    ) {
+      return res.json(respostaGenerica);
+    }
+
+    const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+    const agora = new Date();
+    const expiresAt = new Date(agora.getTime() + RESET_CODE_TTL_MS);
+
+    await db.collection("passwordResets").replaceOne(
+      { email },
+      {
+        userId: user._id,
+        email,
+        codeHash: hashResetCode(email, code),
+        attempts: 0,
+        createdAt: agora,
+        expiresAt,
+      },
+      { upsert: true }
+    );
+
+    try {
+      await sendPasswordResetEmail({ to: user.email, name: user.name, code });
+    } catch (mailError) {
+      await db.collection("passwordResets").deleteOne({ email });
+      console.error("[AuthController] Erro ao enviar e-mail de recuperação:", mailError);
+      return res.status(500).json({
+        message: "Não foi possível enviar o e-mail no momento. Tente novamente mais tarde.",
+      });
+    }
+
+    res.json(respostaGenerica);
+  } catch (error) {
+    console.error("[AuthController] Erro ao solicitar recuperação de senha:", error);
+    res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email: emailBruto, codigo: codigoBruto, novaSenha } = req.body || {};
+
+    if (!emailBruto || typeof emailBruto !== "string" || !isValidEmail(emailBruto.trim())) {
+      return res.status(400).json({ message: "Informe um e-mail válido." });
+    }
+
+    const codigo = String(codigoBruto ?? "").trim();
+    if (!/^\d{6}$/.test(codigo)) {
+      return res.status(400).json({ message: "Informe o código de 6 dígitos enviado por e-mail." });
+    }
+
+    if (!novaSenha || typeof novaSenha !== "string" || novaSenha.length < 8 || novaSenha.length > 72) {
+      return res.status(400).json({ message: "A nova senha deve ter entre 8 e 72 caracteres." });
+    }
+
+    const email = emailBruto.trim().toLowerCase();
+    const db = getDatabase();
+    const resetDoc = await db.collection("passwordResets").findOne({ email });
+
+    if (!resetDoc) {
+      return res.status(400).json({ message: "Código inválido ou expirado. Solicite um novo código." });
+    }
+
+    if (new Date(resetDoc.expiresAt).getTime() < Date.now()) {
+      await db.collection("passwordResets").deleteOne({ _id: resetDoc._id });
+      return res.status(400).json({ message: "Código expirado. Solicite um novo código." });
+    }
+
+    const hashInformado = hashResetCode(email, codigo);
+    if (!hashesIguais(hashInformado, resetDoc.codeHash)) {
+      const tentativas = (resetDoc.attempts || 0) + 1;
+      if (tentativas >= MAX_RESET_ATTEMPTS) {
+        await db.collection("passwordResets").deleteOne({ _id: resetDoc._id });
+        return res.status(400).json({
+          message: "Muitas tentativas incorretas. Solicite um novo código.",
+        });
+      }
+
+      await db.collection("passwordResets").updateOne(
+        { _id: resetDoc._id },
+        { $set: { attempts: tentativas } }
+      );
+      return res.status(400).json({ message: "Código inválido. Verifique os dígitos e tente novamente." });
+    }
+
+    const hashedPassword = await bcrypt.hash(novaSenha, 12);
+    await db.collection("users").updateOne(
+      { _id: resetDoc.userId },
+      { $set: { password: hashedPassword } }
+    );
+    await db.collection("passwordResets").deleteOne({ _id: resetDoc._id });
+
+    res.json({ message: "Senha redefinida com sucesso." });
+  } catch (error) {
+    console.error("[AuthController] Erro ao redefinir senha:", error);
+    res.status(500).json({ message: "Erro interno do servidor." });
   }
 };

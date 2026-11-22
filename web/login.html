@@ -24,6 +24,7 @@
 
     <form id="login-form" novalidate>
       <div id="form-error" class="alert" role="alert" hidden></div>
+      <div id="form-success" class="alert alert--success" role="status" hidden></div>
 
       <div class="field">
         <label for="email">E-mail</label>
@@ -31,7 +32,10 @@
       </div>
 
       <div class="field">
-        <label for="password">Senha</label>
+        <div class="field__head">
+          <label for="password">Senha</label>
+          <a href="recuperar-senha.html" class="auth-forgot">Esqueceu a senha?</a>
+        </div>
         <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••"
           required>
       </div>

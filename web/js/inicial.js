@@ -8,6 +8,8 @@ const pawSvg = `<span class="icon icon--paw" aria-hidden="true"></span>`;
 const calendarSvg = `<span class="icon icon--calendar card__icon" aria-hidden="true"></span>`;
 const clockSvg = `<span class="icon icon--clock card__icon" aria-hidden="true"></span>`;
 const alertSvg = `<span class="icon icon--alert card__icon" aria-hidden="true"></span>`;
+const checkSvg = `<span class="icon icon--check" aria-hidden="true"></span>`;
+const trashSvg = `<span class="icon icon--trash" aria-hidden="true"></span>`;
 
 // Elementos
 const loadingState = document.getElementById('loading-state');
@@ -73,6 +75,8 @@ async function fetchAPI(endpoint) {
 
 let consultasCache = new Map();
 let vacinasCache = new Map();
+let medicamentosCache = new Map();
+let dosesHojeAtual = [];
 
 async function carregarPainelDoPet(petId) {
   loadingState.hidden = false;
@@ -80,10 +84,11 @@ async function carregarPainelDoPet(petId) {
   painelContent.hidden = true;
 
   try {
-    const [data, consultasData, vacinasData] = await Promise.all([
+    const [data, consultasData, vacinasData, medicamentosData] = await Promise.all([
       fetchAPI(`/api/pets/${petId}/dashboard`),
       fetchAPI(`/api/pets/${petId}/consultas`),
       fetchAPI(`/api/pets/${petId}/vacinas`),
+      fetchAPI(`/api/pets/${petId}/medicamentos`),
     ]);
 
     consultasCache = new Map();
@@ -93,6 +98,10 @@ async function carregarPainelDoPet(petId) {
     vacinasCache = new Map();
     (vacinasData.aplicadas || []).forEach((v) => vacinasCache.set(String(v._id), { ...v, status: 'aplicada' }));
     (vacinasData.proximas || []).forEach((v) => vacinasCache.set(String(v._id), { ...v, status: 'pendente' }));
+
+    medicamentosCache = new Map();
+    (medicamentosData.medicamentos || []).forEach((m) => medicamentosCache.set(String(m._id), m));
+    dosesHojeAtual = Array.isArray(medicamentosData.dosesHoje) ? medicamentosData.dosesHoje : [];
 
     renderizarDashboard(data);
 
@@ -110,28 +119,47 @@ function renderizarDashboard(data) {
   petNameEl.textContent = data.pet.nome;
 
   // Renderiza Medicamentos
+  medActionError.hidden = true;
   sections.meds.list.innerHTML = '';
-  if (data.medicamentosHoje.length === 0) {
+  if (dosesHojeAtual.length === 0) {
     sections.meds.empty.hidden = false;
   } else {
     sections.meds.empty.hidden = true;
-    data.medicamentosHoje.forEach(med => {
-      const isDoneClass = med.tomado ? 'is-done' : 'card--brand';
-      const btnText = med.tomado ? 'Tomado' : 'Registrar como tomado';
+    sections.meds.list.innerHTML = dosesHojeAtual.map((dose) => {
+      const horarioTexto = dose.horario || 'Sem horário';
+      if (dose.tomado) {
+        const infoTomado = dose.doseRegistrada
+          ? `Tomado: ${dose.doseRegistrada}`
+          : 'Tomado';
 
-      sections.meds.list.innerHTML += `
-        <article class="card ${isDoneClass}">
+        return `
+        <article class="card is-done med-dose-card" data-med-id="${esc(dose.medicamentoId)}" data-horario="${esc(dose.horario || '')}">
           <div class="card__row">
-            <h3 class="card__title">${esc(med.nome)}</h3>
-            <span class="card__time">${esc(med.horario)}</span>
+            <h3 class="card__title">${esc(dose.nome)}</h3>
+            <span class="card__time">${esc(horarioTexto)}</span>
           </div>
-          <p class="card__meta">${esc(med.dose)}</p>
+          <p class="card__meta">${esc(dose.dose)}</p>
+          <p class="med-taken-status">${checkSvg}<span>${esc(infoTomado)}</span></p>
           <div class="card__actions">
-            <button type="button" class="btn btn--sm btn--outline" disabled>Ver detalhes</button>
-            <button type="button" class="btn btn--sm" disabled>${esc(btnText)}</button>
+            <button type="button" class="btn btn--sm btn--outline" data-action="med-detalhes" data-id="${esc(dose.medicamentoId)}">Ver detalhes</button>
+            <button type="button" class="btn btn--sm" data-action="med-desfazer">Desfazer</button>
           </div>
         </article>`;
-    });
+      }
+
+      return `
+      <article class="card card--brand med-dose-card" data-med-id="${esc(dose.medicamentoId)}" data-horario="${esc(dose.horario || '')}">
+        <div class="card__row">
+          <h3 class="card__title">${esc(dose.nome)}</h3>
+          <span class="card__time">${esc(horarioTexto)}</span>
+        </div>
+        <p class="card__meta">${esc(dose.dose)}</p>
+        <div class="card__actions">
+          <button type="button" class="btn btn--sm btn--outline" data-action="med-detalhes" data-id="${esc(dose.medicamentoId)}">Ver detalhes</button>
+          <button type="button" class="btn btn--sm" data-action="med-tomar">Registrar como tomado</button>
+        </div>
+      </article>`;
+    }).join('');
   }
 
   // Renderiza Consultas de Hoje
@@ -298,11 +326,18 @@ async function carregarDocumentos() {
     const docs = await fetchAPI(docsEndpoint());
 
     docList.innerHTML = docs.map((d) => {
-      const ehPdf = /\.pdf$/i.test(d.nome || '');
+      const ehPdf = d.tipo === 'application/pdf' || /\.pdf$/i.test(d.nome || '');
       return `
       <li class="doc-item">
-        <a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">${esc(d.nome)}</a>
-        <span class="doc-item__type">${ehPdf ? 'PDF' : 'Imagem'}</span>
+        <a class="doc-item__link" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">${esc(d.nome)}</a>
+        <div class="doc-item__meta">
+          <span class="doc-item__type">${ehPdf ? 'PDF' : 'Imagem'}</span>
+          <button type="button" class="doc-item__delete" data-action="excluir-doc"
+            data-doc-id="${esc(d._id)}" data-doc-name="${esc(d.nome)}"
+            aria-label="Excluir ${esc(d.nome)}" title="Excluir documento">
+            ${trashSvg}
+          </button>
+        </div>
       </li>`;
     }).join('');
 
@@ -314,6 +349,40 @@ async function carregarDocumentos() {
     }
   }
 }
+
+docList.addEventListener('click', async (event) => {
+  const btn = event.target.closest('[data-action="excluir-doc"]');
+  if (!btn || !btn.dataset.docId) return;
+
+  const nome = btn.dataset.docName || 'este documento';
+  if (!window.confirm(`Deseja realmente excluir "${nome}"?`)) return;
+
+  docError.hidden = true;
+  btn.disabled = true;
+  try {
+    const response = await fetch(`${docsEndpoint()}/${encodeURIComponent(btn.dataset.docId)}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      showDocError(data.message || 'Erro ao excluir o documento.');
+      return;
+    }
+
+    await carregarDocumentos();
+  } catch {
+    showDocError('Erro de comunicação com o servidor.');
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 document.addEventListener('click', (event) => {
   const btn = event.target.closest('[data-action="documentos"]');
@@ -832,10 +901,518 @@ vaccineDeleteBtn.addEventListener('click', async () => {
   }
 });
 
+// Medicamentos de hoje (tomar, desfazer e detalhes)
+const FORMATOS_MED_VALIDOS = new Set(['Comprimido', 'Cápsula', 'Líquido', 'Gotas', 'Pomada', 'Injeção']);
+const UNIDADES_MED_VALIDAS = new Set(['mg', 'ml', 'g', 'gotas', 'comprimido', 'cápsula', 'unidade']);
+const MAX_HORARIOS_MED = 6;
+
+const medActionError = document.getElementById('med-action-error');
+const medDialog = document.getElementById('med-dialog');
+const medCloseBtn = document.getElementById('med-close');
+const medCancelBtn = document.getElementById('med-cancel');
+const medForm = document.getElementById('med-form');
+const medError = document.getElementById('med-error');
+const medSaveBtn = document.getElementById('med-save');
+const medDeleteBtn = document.getElementById('med-delete');
+
+const medNomeInput = document.getElementById('med-nome');
+const medIncluirSalCheckbox = document.getElementById('med-incluir-sal');
+const medSalWrapper = document.getElementById('med-sal-wrapper');
+const medPrincipioInput = document.getElementById('med-principio');
+const medFormatoSelect = document.getElementById('med-formato');
+const medDosagemInput = document.getElementById('med-dosagem');
+const medUnidadeSelect = document.getElementById('med-unidade');
+const medFrequenciaSelect = document.getElementById('med-frequencia');
+const medDaysGroup = document.getElementById('med-days-group');
+const medSemHorarioCheckbox = document.getElementById('med-sem-horario');
+const medHorariosSection = document.getElementById('med-horarios-section');
+const medHorariosListEl = document.getElementById('med-horarios-list');
+const medAddHorarioBtn = document.getElementById('med-add-horario');
+const medInicioInput = document.getElementById('med-inicio');
+const medFimInput = document.getElementById('med-fim');
+
+let editingMedId = null;
+
+function isDataRealISO(valor) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(valor || '').trim());
+  if (!match) return false;
+  const ano = Number(match[1]);
+  const mes = Number(match[2]);
+  const dia = Number(match[3]);
+  const data = new Date(Date.UTC(ano, mes - 1, dia));
+  return data.getUTCFullYear() === ano && data.getUTCMonth() === mes - 1 && data.getUTCDate() === dia;
+}
+
+function isHorarioValido(valor) {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(valor || '').trim());
+}
+
+function mostrarErroMedAcao(mensagem) {
+  medActionError.textContent = mensagem;
+  medActionError.hidden = false;
+}
+
+function limparErrosMedForm() {
+  medError.hidden = true;
+  medForm.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+    el.removeAttribute('aria-invalid');
+  });
+}
+
+function mostrarErroMedForm(mensagem, campo) {
+  medError.textContent = mensagem;
+  medError.hidden = false;
+  if (campo) {
+    campo.setAttribute('aria-invalid', 'true');
+    campo.focus();
+  }
+}
+
+function atualizarBotaoAddHorarioMed() {
+  const total = medHorariosListEl.querySelectorAll('.med-horario-row').length;
+  medAddHorarioBtn.disabled = total >= MAX_HORARIOS_MED;
+}
+
+function adicionarLinhaHorarioMed(valor = '') {
+  if (medHorariosListEl.querySelectorAll('.med-horario-row').length >= MAX_HORARIOS_MED) return;
+
+  const row = document.createElement('div');
+  row.className = 'med-horario-row';
+
+  const input = document.createElement('input');
+  input.type = 'time';
+  input.className = 'med-horario-input';
+  input.value = valor;
+  input.setAttribute('aria-label', 'Horário da dose');
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'btn btn--sm btn--outline';
+  removeBtn.dataset.action = 'remover-horario';
+  removeBtn.textContent = 'Remover';
+
+  row.appendChild(input);
+  row.appendChild(removeBtn);
+  medHorariosListEl.appendChild(row);
+  atualizarBotaoAddHorarioMed();
+}
+
+function preencherHorariosMed(lista) {
+  medHorariosListEl.innerHTML = '';
+  if (Array.isArray(lista) && lista.length > 0) {
+    lista.slice(0, MAX_HORARIOS_MED).forEach((h) => adicionarLinhaHorarioMed(h));
+  } else {
+    adicionarLinhaHorarioMed('08:00');
+  }
+}
+
+function atualizarSecaoHorariosMed() {
+  const semHorario = medSemHorarioCheckbox.checked;
+  medHorariosSection.hidden = semHorario;
+  if (!semHorario && medHorariosListEl.querySelectorAll('.med-horario-row').length === 0) {
+    adicionarLinhaHorarioMed('08:00');
+  }
+  atualizarBotaoAddHorarioMed();
+}
+
+function atualizarSecaoSalMed() {
+  medSalWrapper.hidden = !medIncluirSalCheckbox.checked;
+}
+
+function atualizarSecaoDiasMed() {
+  medDaysGroup.hidden = medFrequenciaSelect.value !== 'semanal';
+}
+
+function definirDiasSelecionadosMed(dias) {
+  const conjunto = new Set(dias);
+  medDaysGroup.querySelectorAll('.med-day-btn').forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(conjunto.has(Number(btn.dataset.day))));
+  });
+}
+
+function obterDiasSelecionadosMed() {
+  if (medFrequenciaSelect.value === 'diario') return [0, 1, 2, 3, 4, 5, 6];
+  const selecionados = [];
+  medDaysGroup.querySelectorAll('.med-day-btn[aria-pressed="true"]').forEach((btn) => {
+    selecionados.push(Number(btn.dataset.day));
+  });
+  return selecionados.sort((a, b) => a - b);
+}
+
+function abrirDetalhesMedicamento(medId) {
+  const item = medicamentosCache.get(String(medId));
+  if (!item) return;
+
+  editingMedId = String(medId);
+  limparErrosMedForm();
+  medForm.reset();
+
+  medNomeInput.value = item.medicamento || '';
+  medIncluirSalCheckbox.checked = Boolean(item.principioAtivo);
+  medPrincipioInput.value = item.principioAtivo || '';
+  atualizarSecaoSalMed();
+
+  medFormatoSelect.value = FORMATOS_MED_VALIDOS.has(item.formato) ? item.formato : 'Comprimido';
+  medDosagemInput.value = item.dosagem ?? '';
+  medUnidadeSelect.value = UNIDADES_MED_VALIDAS.has(item.unidade) ? item.unidade : 'mg';
+
+  const dias = Array.isArray(item.diasDaSemana) ? item.diasDaSemana : [];
+  if (dias.length === 7) {
+    medFrequenciaSelect.value = 'diario';
+    definirDiasSelecionadosMed([]);
+  } else {
+    medFrequenciaSelect.value = 'semanal';
+    definirDiasSelecionadosMed(dias);
+  }
+  atualizarSecaoDiasMed();
+
+  const horarios = Array.isArray(item.horarios) ? item.horarios : [];
+  medSemHorarioCheckbox.checked = horarios.length === 0;
+  preencherHorariosMed(horarios);
+  atualizarSecaoHorariosMed();
+
+  medInicioInput.value = String(item.dataInicio || '').slice(0, 10);
+  medFimInput.value = item.dataFim ? String(item.dataFim).slice(0, 10) : '';
+
+  medDialog.showModal();
+  medNomeInput.focus();
+}
+
+async function registrarDoseTomadaInicial(card, btn) {
+  medActionError.hidden = true;
+  const petId = sessionStorage.getItem('activePetId');
+  const medId = card.dataset.medId;
+  const horario = card.dataset.horario || '';
+
+  btn.disabled = true;
+  try {
+    const response = await fetch(
+      `/api/pets/${encodeURIComponent(petId)}/medicamentos/${encodeURIComponent(medId)}/doses`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ horario }),
+      }
+    );
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroMedAcao(resData.message || 'Erro ao registrar dose.');
+      return;
+    }
+
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroMedAcao('Erro de comunicação com o servidor.');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function desfazerDoseTomadaInicial(card, btn) {
+  medActionError.hidden = true;
+  const petId = sessionStorage.getItem('activePetId');
+  const medId = card.dataset.medId;
+  const horario = card.dataset.horario || '';
+
+  btn.disabled = true;
+  try {
+    const response = await fetch(
+      `/api/pets/${encodeURIComponent(petId)}/medicamentos/${encodeURIComponent(medId)}/doses?horario=${encodeURIComponent(horario)}`,
+      {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      }
+    );
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroMedAcao(resData.message || 'Erro ao desfazer registro da dose.');
+      return;
+    }
+
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroMedAcao('Erro de comunicação com o servidor.');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+medIncluirSalCheckbox.addEventListener('change', () => {
+  atualizarSecaoSalMed();
+  if (medIncluirSalCheckbox.checked) medPrincipioInput.focus();
+});
+
+medFrequenciaSelect.addEventListener('change', atualizarSecaoDiasMed);
+medSemHorarioCheckbox.addEventListener('change', atualizarSecaoHorariosMed);
+
+medAddHorarioBtn.addEventListener('click', () => {
+  adicionarLinhaHorarioMed('');
+  const inputs = medHorariosListEl.querySelectorAll('.med-horario-input');
+  if (inputs.length > 0) inputs[inputs.length - 1].focus();
+});
+
+medHorariosListEl.addEventListener('click', (event) => {
+  const removeBtn = event.target.closest('[data-action="remover-horario"]');
+  if (!removeBtn) return;
+  const row = removeBtn.closest('.med-horario-row');
+  if (row) row.remove();
+  atualizarBotaoAddHorarioMed();
+});
+
+medDaysGroup.addEventListener('click', (event) => {
+  const btn = event.target.closest('.med-day-btn');
+  if (!btn) return;
+  const atual = btn.getAttribute('aria-pressed') === 'true';
+  btn.setAttribute('aria-pressed', String(!atual));
+});
+
+medForm.addEventListener('input', (event) => {
+  if (event.target.getAttribute && event.target.getAttribute('aria-invalid') === 'true') {
+    event.target.removeAttribute('aria-invalid');
+  }
+});
+
+medCloseBtn.addEventListener('click', () => medDialog.close());
+medCancelBtn.addEventListener('click', () => medDialog.close());
+medDialog.addEventListener('click', (event) => {
+  if (event.target === medDialog) medDialog.close();
+});
+
+document.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-action]');
+  if (!btn) return;
+
+  const acao = btn.dataset.action;
+  if (acao === 'med-detalhes' && btn.dataset.id) {
+    abrirDetalhesMedicamento(btn.dataset.id);
+    return;
+  }
+  if (acao === 'med-tomar') {
+    const card = btn.closest('.med-dose-card');
+    if (card) registrarDoseTomadaInicial(card, btn);
+    return;
+  }
+  if (acao === 'med-desfazer') {
+    const card = btn.closest('.med-dose-card');
+    if (card) desfazerDoseTomadaInicial(card, btn);
+  }
+});
+
+medForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!editingMedId) return;
+  limparErrosMedForm();
+
+  const medicamento = medNomeInput.value.trim();
+  const principioAtivo = medIncluirSalCheckbox.checked ? medPrincipioInput.value.trim() : '';
+  const formato = medFormatoSelect.value;
+  const dosagemStr = medDosagemInput.value.trim();
+  const unidade = medUnidadeSelect.value;
+  const diasDaSemana = obterDiasSelecionadosMed();
+  const dataInicio = medInicioInput.value;
+  const dataFim = medFimInput.value;
+
+  if (medicamento.length < 1 || medicamento.length > 100) {
+    mostrarErroMedForm('Informe o nome de farmácia (entre 1 e 100 caracteres).', medNomeInput);
+    return;
+  }
+  if (principioAtivo.length > 100) {
+    mostrarErroMedForm('O nome da droga/sal deve ter no máximo 100 caracteres.', medPrincipioInput);
+    return;
+  }
+  if (!FORMATOS_MED_VALIDOS.has(formato)) {
+    mostrarErroMedForm('Selecione um formato válido.', medFormatoSelect);
+    return;
+  }
+  const dosagem = Number(dosagemStr);
+  if (!dosagemStr || !Number.isFinite(dosagem) || dosagem <= 0) {
+    mostrarErroMedForm('A dosagem deve ser um número maior que zero.', medDosagemInput);
+    return;
+  }
+  if (!UNIDADES_MED_VALIDAS.has(unidade)) {
+    mostrarErroMedForm('Selecione uma unidade válida.', medUnidadeSelect);
+    return;
+  }
+  if (diasDaSemana.length === 0) {
+    mostrarErroMedForm('Escolha pelo menos um dia da semana.');
+    return;
+  }
+
+  const horarios = [];
+  if (!medSemHorarioCheckbox.checked) {
+    const inputs = Array.from(medHorariosListEl.querySelectorAll('.med-horario-input'));
+    if (inputs.length === 0) {
+      mostrarErroMedForm('Adicione pelo menos um horário ou marque "Sem horário".');
+      return;
+    }
+    const vistos = new Set();
+    for (const input of inputs) {
+      const h = input.value.trim();
+      if (!isHorarioValido(h)) {
+        mostrarErroMedForm('Preencha todos os horários no formato HH:MM.', input);
+        return;
+      }
+      if (vistos.has(h)) {
+        mostrarErroMedForm('Não repita horários iguais.', input);
+        return;
+      }
+      vistos.add(h);
+      horarios.push(h);
+    }
+  }
+
+  if (!isDataRealISO(dataInicio)) {
+    mostrarErroMedForm('Informe uma data de início válida.', medInicioInput);
+    return;
+  }
+  if (dataFim) {
+    if (!isDataRealISO(dataFim)) {
+      mostrarErroMedForm('Informe uma data de fim válida.', medFimInput);
+      return;
+    }
+    if (dataFim < dataInicio) {
+      mostrarErroMedForm('A data de fim não pode ser anterior à data de início.', medFimInput);
+      return;
+    }
+  }
+
+  const petId = sessionStorage.getItem('activePetId');
+  medSaveBtn.disabled = true;
+  medDeleteBtn.disabled = true;
+  try {
+    const response = await fetch(
+      `/api/pets/${encodeURIComponent(petId)}/medicamentos/${encodeURIComponent(editingMedId)}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          medicamento,
+          principioAtivo,
+          formato,
+          dosagem,
+          unidade,
+          diasDaSemana,
+          horarios,
+          dataInicio,
+          dataFim: dataFim || null,
+        }),
+      }
+    );
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroMedForm(resData.message || 'Erro ao salvar medicamento.');
+      return;
+    }
+
+    medDialog.close();
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroMedForm('Erro de comunicação com o servidor.');
+  } finally {
+    medSaveBtn.disabled = false;
+    medDeleteBtn.disabled = false;
+  }
+});
+
+medDeleteBtn.addEventListener('click', async () => {
+  if (!editingMedId) return;
+  if (!window.confirm('Deseja realmente excluir este medicamento e seu histórico de doses?')) return;
+
+  medError.hidden = true;
+  const petId = sessionStorage.getItem('activePetId');
+  medSaveBtn.disabled = true;
+  medDeleteBtn.disabled = true;
+  try {
+    const response = await fetch(
+      `/api/pets/${encodeURIComponent(petId)}/medicamentos/${encodeURIComponent(editingMedId)}`,
+      {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      }
+    );
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const resData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      mostrarErroMedForm(resData.message || 'Erro ao excluir medicamento.');
+      return;
+    }
+
+    medDialog.close();
+    await carregarPainelDoPet(petId);
+  } catch {
+    mostrarErroMedForm('Erro de comunicação com o servidor.');
+  } finally {
+    medSaveBtn.disabled = false;
+    medDeleteBtn.disabled = false;
+  }
+});
+
+// Imagem do Tutor
+function renderizarAvatarTutor(user) {
+  const link = document.getElementById('tutor-avatar');
+  const img = document.getElementById('tutor-avatar-img');
+  const initialsEl = document.getElementById('tutor-avatar-initials');
+  if (!link || !img || !initialsEl) return;
+
+  const partes = String(user?.name || '').trim().split(/\s+/).filter(Boolean);
+  const iniciais = partes.length === 0
+    ? '?'
+    : partes.length === 1
+      ? partes[0].slice(0, 2).toUpperCase()
+      : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+
+  initialsEl.textContent = iniciais;
+  const rotulo = user?.name ? `Perfil de ${user.name}` : 'Meu perfil';
+  link.title = rotulo;
+  link.setAttribute('aria-label', rotulo);
+
+  img.addEventListener('error', () => {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  });
+
+  if (user?.temFoto) {
+    img.src = `/api/auth/me/foto?v=${Date.now()}`;
+    img.hidden = false;
+    initialsEl.hidden = true;
+  } else {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  }
+}
+
 async function inicializarAplicacao() {
   try {
-    // Busca os pets
-    const pets = await fetchAPI('/api/pets');
+    // Busca pets e dados do tutor
+    const [pets, user] = await Promise.all([
+      fetchAPI('/api/pets'),
+      fetchAPI('/api/auth/me').catch(() => null),
+    ]);
 
     // Sem pets
     if (pets.length === 0) {
@@ -843,13 +1420,9 @@ async function inicializarAplicacao() {
       return;
     }
 
-    // Verifica 1 pet
-    if (pets.length === 1) {
-      petSwitcherContainer.style.display = 'none';
-    } else {
-      petSwitcherContainer.style.display = 'flex';
-      petListEl.innerHTML = '';
-    }
+    // Caixa dos Pets
+    renderizarAvatarTutor(user);
+    petListEl.innerHTML = '';
 
     // Escolher pet
     let activePetId = sessionStorage.getItem('activePetId');
@@ -859,14 +1432,29 @@ async function inicializarAplicacao() {
     }
 
     // Seletor
+    const cacheBust = Date.now();
     pets.forEach(pet => {
       const isActive = pet._id === activePetId;
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `pet-avatar ${isActive ? 'is-active' : ''}`;
       btn.title = pet.nome;
+      btn.setAttribute('aria-label', pet.nome);
       btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-      btn.innerHTML = pawSvg;
+
+      // Usa a foto do pet quando existir, com fallback para o ícone de patinha
+      if (pet.temFoto) {
+        const img = document.createElement('img');
+        img.className = 'pet-avatar__img';
+        img.src = `/api/pets/${encodeURIComponent(pet._id)}/foto?v=${cacheBust}`;
+        img.alt = '';
+        img.addEventListener('error', () => {
+          btn.innerHTML = pawSvg;
+        });
+        btn.appendChild(img);
+      } else {
+        btn.innerHTML = pawSvg;
+      }
 
       btn.addEventListener('click', () => {
         if (pet._id !== sessionStorage.getItem('activePetId')) {

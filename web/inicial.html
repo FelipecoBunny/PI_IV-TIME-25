@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/inicial.css">
   <link rel="stylesheet" href="css/consultas.css">
   <link rel="stylesheet" href="css/vacinas.css">
+  <link rel="stylesheet" href="css/medicamentos.css">
 
 </head>
 
@@ -21,15 +22,35 @@
 
   <header class="app-header">
     <div class="app-header__inner">
-      <a href="inicial.html" class="app-header__brand">PetHealth</a>
+      <a href="inicial.html" class="app-header__brand">
+        <img src="assets/logo.png" alt="PetHealth" class="app-header__logo">
+      </a>
       <nav aria-label="Principal">
         <ul class="app-nav">
-          <li><a href="inicial.html" class="app-header__link" aria-current="page">Início</a></li>
-          <li><a href="consultas.html" class="app-header__link">Consultas</a></li>
-          <li><a href="vacinas.html" class="app-header__link">Vacinas</a></li>
-          <li><a href="medicamentos.html" class="app-header__link">Medicamentos</a></li>
-          <li><a href="perfil.html" class="app-header__link">Perfil</a></li>
-          <li><a href="login.html" class="app-header__link" data-logout>Sair</a></li>
+          <li>
+            <a href="inicial.html" class="app-header__link" aria-current="page">
+              <span class="icon icon--home" aria-hidden="true"></span>
+              Início
+            </a>
+          </li>
+          <li>
+            <a href="consultas.html" class="app-header__link">
+              <span class="icon icon--form" aria-hidden="true"></span>
+              Consultas
+            </a>
+          </li>
+          <li>
+            <a href="vacinas.html" class="app-header__link">
+              <span class="icon icon--needle" aria-hidden="true"></span>
+              Vacinas
+            </a>
+          </li>
+          <li>
+            <a href="medicamentos.html" class="app-header__link">
+              <span class="icon icon--med-active" aria-hidden="true"></span>
+              Medicamentos
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
@@ -55,8 +76,15 @@
         </div>
 
         <div class="pet-switcher" id="pet-switcher-container">
-          <span class="pet-switcher__label" id="pet-switcher-label">Mudar de pet</span>
-          <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+          <span class="pet-switcher__label" id="pet-switcher-label">Meus Pets</span>
+          <div class="pet-switcher__box">
+            <div class="pet-switcher__list" id="pet-list" role="group" aria-labelledby="pet-switcher-label">
+            </div>
+            <span class="pet-switcher__divider" aria-hidden="true"></span>
+            <a href="perfil.html" class="tutor-avatar" id="tutor-avatar" aria-label="Meu perfil" title="Meu perfil">
+              <img class="tutor-avatar__img" id="tutor-avatar-img" alt="" hidden>
+              <span class="tutor-avatar__initials" id="tutor-avatar-initials" aria-hidden="true"></span>
+            </a>
           </div>
         </div>
       </section>
@@ -68,6 +96,7 @@
 
           <section class="painel-section" aria-labelledby="meds-title">
             <h2 id="meds-title">Medicamentos de Hoje</h2>
+            <div id="med-action-error" class="alert" role="alert" hidden></div>
             <div class="med-list" id="med-list"></div>
             <p class="empty" id="meds-empty" hidden>Nenhum medicamento para hoje.</p>
           </section>
@@ -287,7 +316,121 @@
     </form>
   </dialog>
 
-  <script src="js/logout.js"></script>
+  <!-- Detalhes e edição de medicamento -->
+  <dialog class="doc-dialog med-dialog" id="med-dialog" aria-labelledby="med-dialog-title">
+    <div class="doc-dialog__head">
+      <h2 id="med-dialog-title">Detalhes do medicamento</h2>
+      <button type="button" class="btn btn--sm btn--outline" id="med-close">Fechar</button>
+    </div>
+    <p class="subtitle" id="med-dialog-subtitle">Atualize as informações, horários ou datas deste medicamento.</p>
+
+    <form id="med-form" novalidate>
+      <div id="med-error" class="alert" role="alert" hidden></div>
+
+      <div class="field">
+        <label for="med-nome">Nome de farmácia</label>
+        <input type="text" id="med-nome" name="medicamento" placeholder="Ex.: Dipirona Gotas" maxlength="100" required>
+      </div>
+
+      <label class="med-check">
+        <input type="checkbox" id="med-incluir-sal">
+        <span>Incluir nome da droga/sal?</span>
+      </label>
+
+      <div class="field" id="med-sal-wrapper" hidden>
+        <label for="med-principio">Nome do medicamento <span class="optional">(droga/sal)</span></label>
+        <input type="text" id="med-principio" name="principioAtivo" placeholder="Ex.: Dipirona sódica" maxlength="100">
+      </div>
+
+      <div class="med-form-grid med-form-grid--3">
+        <div class="field">
+          <label for="med-formato">Formato</label>
+          <select id="med-formato" name="formato" required>
+            <option value="Comprimido">Comprimido</option>
+            <option value="Cápsula">Cápsula</option>
+            <option value="Líquido">Líquido</option>
+            <option value="Gotas">Gotas</option>
+            <option value="Pomada">Pomada</option>
+            <option value="Injeção">Injeção</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="med-dosagem">Dosagem</label>
+          <input type="number" id="med-dosagem" name="dosagem" min="0.01" step="any" inputmode="decimal"
+            placeholder="Ex.: 150" required>
+        </div>
+
+        <div class="field">
+          <label for="med-unidade">Unidade</label>
+          <select id="med-unidade" name="unidade" required>
+            <option value="mg">mg</option>
+            <option value="ml">ml</option>
+            <option value="g">g</option>
+            <option value="gotas">gotas</option>
+            <option value="comprimido">comprimido</option>
+            <option value="cápsula">cápsula</option>
+            <option value="unidade">unidade</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="med-frequencia">Frequência</label>
+        <select id="med-frequencia" name="frequencia">
+          <option value="diario">Todos os dias</option>
+          <option value="semanal">Em dias específicos da semana</option>
+        </select>
+      </div>
+
+      <div class="med-days" id="med-days-group" role="group" aria-label="Dias da semana" hidden>
+        <button type="button" class="med-day-btn" data-day="0" aria-pressed="false">Dom</button>
+        <button type="button" class="med-day-btn" data-day="1" aria-pressed="false">Seg</button>
+        <button type="button" class="med-day-btn" data-day="2" aria-pressed="false">Ter</button>
+        <button type="button" class="med-day-btn" data-day="3" aria-pressed="false">Qua</button>
+        <button type="button" class="med-day-btn" data-day="4" aria-pressed="false">Qui</button>
+        <button type="button" class="med-day-btn" data-day="5" aria-pressed="false">Sex</button>
+        <button type="button" class="med-day-btn" data-day="6" aria-pressed="false">Sáb</button>
+      </div>
+
+      <fieldset class="field med-horarios-fieldset">
+        <legend>Horários</legend>
+
+        <label class="med-check">
+          <input type="checkbox" id="med-sem-horario">
+          <span>Sem horário</span>
+        </label>
+
+        <div id="med-horarios-section">
+          <div class="med-horarios-list" id="med-horarios-list"></div>
+          <div class="med-horarios-footer">
+            <button type="button" class="btn btn--sm btn--outline" id="med-add-horario">Adicionar horário</button>
+            <span class="hint">Até 6 horários por dia.</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="med-form-grid med-form-grid--2">
+        <div class="field">
+          <label for="med-inicio">Início</label>
+          <input type="date" id="med-inicio" name="dataInicio" required>
+        </div>
+
+        <div class="field">
+          <label for="med-fim">Fim <span class="optional">(opcional)</span></label>
+          <input type="date" id="med-fim" name="dataFim">
+          <p class="hint">Deixe vazio para uso contínuo.</p>
+        </div>
+      </div>
+
+      <div class="card__actions">
+        <button type="submit" class="btn btn--sm" id="med-save">Salvar alterações</button>
+        <button type="button" class="btn btn--sm btn--outline" id="med-cancel">Cancelar</button>
+        <button type="button" class="btn btn--sm btn--outline med-delete-btn" id="med-delete">Excluir</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="js/inicial.js"></script>
 </body>
 
