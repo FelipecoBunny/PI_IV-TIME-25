@@ -115,7 +115,7 @@ export const listarConsultas = async (req, res) => {
     if (vencidasIds.length > 0) {
       await db.collection("consultations").updateMany(
         { _id: { $in: vencidasIds } },
-        { $set: { status: "realizada" } }
+        { $set: { status: "realizada", atualizadoEm: new Date() } }
       );
       todas.forEach((c) => {
         if (vencidasIds.some((id) => id.equals(c._id))) {
@@ -292,6 +292,7 @@ export const atualizarConsulta = async (req, res) => {
       local: local.trim(),
       veterinario: veterinario.trim(),
       status: statusCalculado,
+      atualizadoEm: new Date(),
     };
 
     const $unset = {};

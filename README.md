@@ -46,6 +46,25 @@ O sistema serve como base inicial para o **monitoramento da saúde do seu pet**,
 
 ---
 
+## Documentos Principais
+
+### Dicionário de Dados
+O dicionário de dados pode ser encontrado no arquivo `documents/DicDadosPetHealth.md`.
+
+**[Abrir Dicionário de Dados](documents/DicDadosPetHealth.md)**
+
+### Relatório de Ideação
+O relatório de ideação pode ser encontrado no arquivo `documents/RELATÓRIO DE IDEAÇÃO - PetHealth.docx`.
+
+**[Abrir Relatório de Ideação](<documents/RELATÓRIO DE IDEAÇÃO - PetHealth.docx>)**
+
+### Relatório de Testes
+O relatório de testes pode ser encontrado nos arquivos `documents/Teste do Servidor JAVA PI IV - PetHealth.pdf` e `documents/Teste do Servidor JAVA PI IV - PetHealth.docx`
+
+**[Abrir Relatório de Testes](<documents/Teste do Servidor JAVA PI IV - PetHealth.pdf>)**
+
+---
+
 ## Integrantes
 | Nome Completo                 | RA       |
 | ----------------------------- | -------- |

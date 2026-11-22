@@ -22,7 +22,7 @@ import {
 
 const router = express.Router();
 
-// Limite de requisições para login (5 tentativas a cada 15 minutos)
+// Limite de requisições para login
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
@@ -42,7 +42,6 @@ const passwordActionLimiter = rateLimit({
   skipSuccessfulRequests: true,
   message: { message: "Muitas tentativas incorretas. Tente novamente mais tarde." }
 });
-router.get("/me", requireAuth, getMe);
 router.put("/me", requireAuth, updateMe);
 router.put("/me/senha", requireAuth, passwordActionLimiter, updatePassword);
 router.get("/me/foto", requireAuth, getProfilePhoto);

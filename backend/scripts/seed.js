@@ -89,7 +89,6 @@ async function runSeed() {
         await db.collection('medications').deleteMany({ petId: { $in: petIds } });
         await db.collection('consultations').deleteMany({ petId: { $in: petIds } });
         await db.collection('medicationLogs').deleteMany({ petId: { $in: petIds } });
-        await db.collection('exams').deleteMany({ petId: { $in: petIds } });
       }
 
       if (existingUser.fotoId) {
@@ -150,7 +149,6 @@ async function runSeed() {
     const vacinasRes = await db.collection('vaccines').insertMany([
       {
         petId: petLunaId,
-        ownerId,
         titulo: 'V10',
         dose: '2ª dose',
         status: 'pendente',
@@ -163,7 +161,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         titulo: 'Antirrábica',
         dose: 'Reforço',
         status: 'pendente',
@@ -175,7 +172,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         titulo: 'Gripe canina',
         dose: 'Dose única',
         status: 'pendente',
@@ -187,7 +183,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         titulo: 'V10',
         dose: '1ª dose',
         status: 'aplicada',
@@ -203,7 +198,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         titulo: 'Antirrábica',
         dose: 'Dose única',
         status: 'aplicada',
@@ -221,7 +215,6 @@ async function runSeed() {
     const medicamentosRes = await db.collection('medications').insertMany([
       {
         petId: petLunaId,
-        ownerId,
         medicamento: 'Amoxicilina',
         principioAtivo: 'Amoxicilina',
         formato: 'Comprimido',
@@ -237,7 +230,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         medicamento: 'Dipirona',
         principioAtivo: 'Dipirona sódica',
         formato: 'Gotas',
@@ -253,7 +245,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         medicamento: 'Suplemento articular',
         formato: 'Cápsula',
         dosagem: 1,
@@ -268,7 +259,6 @@ async function runSeed() {
       },
       {
         petId: petLunaId,
-        ownerId,
         medicamento: 'Colírio',
         formato: 'Gotas',
         dosagem: 2,
@@ -389,13 +379,6 @@ async function runSeed() {
         criadoEm: agora
       }
     ]);
-
-    // 7. Índices de Otimização
-    await db.collection('vaccines').createIndex({ petId: 1 });
-    await db.collection('medications').createIndex({ ownerId: 1 });
-    await db.collection('medications').createIndex({ petId: 1, status: 1 });
-    await db.collection('medicationLogs').createIndex({ petId: 1, data: 1 });
-    await db.collection('consultations').createIndex({ petId: 1, data: -1 });
 
     console.log(
       `\nSeed concluído!\n` +

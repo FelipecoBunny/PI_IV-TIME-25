@@ -289,16 +289,13 @@ export const criarMedicamento = async (req, res) => {
     }
 
     const hoje = getHojeSP();
-    const agora = new Date();
     const status = dados.dataFim === null || dados.dataFim >= hoje ? "ativo" : "concluido";
 
     const novoMedicamento = {
       petId: pet._id,
-      ownerId: new ObjectId(req.session.userId),
       ...dados,
       status,
-      criadoEm: agora,
-      atualizadoEm: agora,
+      criadoEm: new Date(),
     };
 
     const result = await db.collection("medications").insertOne(novoMedicamento);
@@ -530,6 +527,12 @@ export const registrarDose = async (req, res) => {
       tomado: true,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(200).json({
+        message: "Dose registrada como tomada.",
+        tomado: true,
+      });
+    }
     console.error("[MedicamentoController] Erro ao registrar dose:", error);
     res.status(500).json({ message: "Erro interno ao registrar dose." });
   }
