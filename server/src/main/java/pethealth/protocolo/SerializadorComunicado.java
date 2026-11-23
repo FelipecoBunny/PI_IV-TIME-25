@@ -17,6 +17,7 @@ public class SerializadorComunicado {
     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
     private static final Map<String, Class<? extends Comunicado>> REGISTRO = new HashMap<>();
 
+    // Mapeia cada tipo JSON para sua classe
     static {
         registrar(ComunicadoDeDesligamento.TIPO, ComunicadoDeDesligamento.class);
         registrar(PedidoParaSair.TIPO, PedidoParaSair.class);
@@ -33,6 +34,7 @@ public class SerializadorComunicado {
         return GSON.toJson(comunicado);
     }
 
+    // Converte o JSON para a subclasse pelo campo tipo
     public static Comunicado deJson(String json) {
         if (json == null || json.isBlank()) {
             return null;

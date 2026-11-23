@@ -79,7 +79,7 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export const register = async (req, res) => {
   try {
-    let { name, email, password } = req.body;
+    let { name, email, password } = req.body || {};
 
     if (!name || typeof name !== "string" || name.trim().length < 1 || name.trim().length > 80) {
       return res.status(400).json({ message: "Nome deve ter entre 1 e 80 caracteres." });
@@ -113,13 +113,14 @@ export const register = async (req, res) => {
       throw error;
     }
   } catch (error) {
+    console.error("[AuthController] Erro ao registrar usuário:", error);
     res.status(500).json({ message: "Erro interno do servidor." });
   }
 };
 
 export const login = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    let { email, password } = req.body || {};
 
     if (!email || typeof email !== "string" || !password || typeof password !== "string") {
       return res.status(401).json({ message: "E-mail ou senha incorretos." });
@@ -145,6 +146,7 @@ export const login = async (req, res) => {
       res.json({ message: "Login efetuado com sucesso." });
     });
   } catch (error) {
+    console.error("[AuthController] Erro ao efetuar login:", error);
     res.status(500).json({ message: "Erro interno do servidor." });
   }
 };
@@ -179,6 +181,7 @@ export const getMe = async (req, res) => {
       criadoEm: user.criadoEm || null,
     });
   } catch (error) {
+    console.error("[AuthController] Erro ao buscar dados do usuário:", error);
     res.status(500).json({ message: "Erro interno do servidor." });
   }
 };

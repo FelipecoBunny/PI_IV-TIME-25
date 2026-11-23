@@ -75,7 +75,7 @@ public class CalculadoraPainelService {
             }
         }
 
-        // Medicamentos de Hoje (0 = Domingo ... 6 = Sabado, identico ao Date.getDay() do JS)
+        // Medicamentos de hoje (0 = domingo a 6 = sábado, igual ao JS)
         int diaSemanaHoje = hoje.getDayOfWeek().getValue() % 7;
         List<RegistroMedicamentoInfo> logs = pedido.getMedicationLogs();
 

@@ -74,6 +74,7 @@ public class SupervisoraDeConexao extends Thread {
                 this.usuarios.add(this.usuario);
             }
 
+            // Processa os pedidos até o cliente sair
             for (;;) {
                 Comunicado comunicado = this.usuario.envie();
 

@@ -77,6 +77,7 @@ function formatarMedicamento(m) {
   };
 }
 
+// Validação do medicamento
 function validarPayloadMedicamento(body) {
   const {
     medicamento,
@@ -194,6 +195,7 @@ function validarPayloadMedicamento(body) {
   return { dados };
 }
 
+// Medicamentos
 export const listarMedicamentos = async (req, res) => {
   try {
     const db = getDatabase();
@@ -453,6 +455,7 @@ export const excluirMedicamento = async (req, res) => {
   }
 };
 
+// Registro de doses do dia
 export const registrarDose = async (req, res) => {
   try {
     const { petId, medicamentoId } = req.params;

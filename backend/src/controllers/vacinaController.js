@@ -9,7 +9,8 @@ import { getDatabase } from "../config/database.js";
 
 const TIME_ZONE = "America/Sao_Paulo";
 const BUCKET_NAME = "vacinaDocumentos";
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+// 10 MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_FILES = 5;
 const DOSES_VALIDAS = new Set(["1ª dose", "2ª dose", "3ª dose", "Reforço", "Dose única"]);
 
@@ -37,6 +38,7 @@ async function verificarDonoPet(db, petIdStr, userIdStr) {
   });
 }
 
+// Validação dos campos da vacina
 function validarPayloadVacina(body, hojeSP) {
   const {
     status,
@@ -161,6 +163,7 @@ export const uploadVacinaMiddleware = (req, res, next) => {
   });
 };
 
+// Vacinas
 export const listarVacinas = async (req, res) => {
   try {
     const db = getDatabase();
@@ -340,6 +343,7 @@ export const excluirVacina = async (req, res) => {
   }
 };
 
+// Documentos no GridFS
 export const listarDocumentosVacina = async (req, res) => {
   try {
     const { petId, vacinaId } = req.params;

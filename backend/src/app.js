@@ -13,6 +13,7 @@ import MongoStore from "connect-mongo";
 import helmet from "helmet";
 import authRoutes from "./routes/auth.js";
 import petRoutes from "./routes/petRoute.js";
+
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 

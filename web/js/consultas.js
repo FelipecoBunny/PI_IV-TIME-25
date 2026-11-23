@@ -17,7 +17,6 @@ const retryBtn = document.getElementById('retry-btn');
 const petSubtitle = document.getElementById('pet-subtitle');
 const sinceEl = document.getElementById('since');
 const petListEl = document.getElementById('pet-list');
-const petSwitcherContainer = document.getElementById('pet-switcher-container');
 
 const consultaList = document.getElementById('consulta-list');
 const consultasEmpty = document.getElementById('consultas-empty');
@@ -48,7 +47,7 @@ function normalize(text) {
 }
 
 async function fetchAPI(endpoint) {
-  const response = await fetch(endpoint);
+  const response = await fetch(endpoint, { credentials: 'same-origin' });
   if (response.status === 401) {
     window.location.href = 'login.html';
     throw new Error('Não autorizado');
@@ -416,16 +415,6 @@ scheduleClose.addEventListener('click', () => scheduleDialog.close());
 
 scheduleDialog.addEventListener('click', (event) => {
   if (event.target === scheduleDialog) scheduleDialog.close();
-});
-
-nextList.addEventListener('click', (event) => {
-  const btn = event.target.closest('[data-action="agendar-card"]');
-  if (!btn) return;
-  abrirModalConsulta({
-    motivo: btn.dataset.titulo,
-    data: btn.dataset.data,
-    horario: btn.dataset.horario
-  });
 });
 
 scheduleForm.addEventListener('submit', async (event) => {

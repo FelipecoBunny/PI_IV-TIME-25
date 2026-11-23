@@ -1,7 +1,6 @@
 /*
 * Autoria: Felipe Nasser Coelho Moussa
 * RA: 25004922
-* Cliente comunicador com o servidor Java
 */
 
 import net from "node:net";

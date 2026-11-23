@@ -185,13 +185,6 @@
   color: var(--color-text-muted);
 }
 
-/* Mensagem de sucesso */
-.alert--success {
-  color: var(--color-success);
-  background: var(--color-success-soft);
-  border-color: var(--color-success);
-}
-
 /* Botões e links de ação */
 a.btn {
   text-decoration: none;

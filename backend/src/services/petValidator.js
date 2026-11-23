@@ -8,6 +8,7 @@ const ESPECIES_VALIDAS = new Set(["cachorro", "gato", "outro"]);
 const SEXOS_VALIDOS = new Set(["femea", "macho"]);
 
 function getHojeSP() {
+  // O locale en-CA formata a data local diretamente como YYYY-MM-DD
   return new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE }).format(new Date());
 }
 

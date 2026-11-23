@@ -63,8 +63,8 @@
     <div id="loading-state" class="empty">Buscando dados do pet...</div>
 
     <div id="error-state" class="empty" hidden>
-      <p style="color: var(--color-danger); margin-bottom: 12px;">Ocorreu um erro ao carregar o painel.</p>
-      <button class="btn btn--outline btn--sm" onclick="location.reload()">Tentar novamente</button>
+      <p class="error-text">Ocorreu um erro ao carregar o painel.</p>
+      <button type="button" class="btn btn--outline btn--sm" id="retry-btn">Tentar novamente</button>
     </div>
 
     <!-- Conteúdo do Painel -->
