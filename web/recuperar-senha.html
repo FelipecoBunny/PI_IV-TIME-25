@@ -1,0 +1,93 @@
+<!-- Autoria: Felipe Nasser Coelho Moussa -->
+<!-- RA: 25004922 -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar senha | PetHealth</title>
+
+  <link rel="stylesheet" href="css/colors.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body class="auth-page">
+
+  <main class="auth-card">
+    <div class="brand">PetHealth</div>
+    <p class="subtitle">A carteira de saúde digital do seu pet</p>
+
+    <h1>Recuperar senha</h1>
+
+    <div id="recovery-error" class="alert" role="alert" hidden></div>
+    <div id="recovery-success" class="alert alert--success" role="status" hidden></div>
+
+    <!-- Passo 1: solicitar o código -->
+    <form id="request-form" novalidate>
+      <p class="hint" style="margin: 0 0 16px;">
+        Informe o e-mail da sua conta. Enviaremos um código de 6 dígitos válido por 15 minutos.
+      </p>
+
+      <div class="field">
+        <label for="recovery-email">E-mail</label>
+        <input type="email" id="recovery-email" name="email" autocomplete="email" placeholder="nome@exemplo.com"
+          required>
+      </div>
+
+      <button type="submit" class="btn" id="request-submit">Enviar código</button>
+    </form>
+
+    <!-- Passo 2: informar código e nova senha -->
+    <form id="reset-form" novalidate hidden>
+      <div class="field">
+        <label for="reset-code">Código de verificação</label>
+        <input type="text" id="reset-code" name="codigo" class="code-input" inputmode="numeric"
+          autocomplete="one-time-code" maxlength="6" placeholder="000000" required>
+        <p class="hint" id="code-hint">Digite os 6 dígitos enviados para o seu e-mail.</p>
+      </div>
+
+      <div class="field">
+        <label for="new-password">Nova senha</label>
+        <div class="password-field">
+          <input type="password" id="new-password" name="novaSenha" autocomplete="new-password" minlength="8"
+            maxlength="72" placeholder="Mínimo de 8 caracteres" required>
+          <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+            <span class="icon icon--eye icon-show" aria-hidden="true"></span>
+            <span class="icon icon--eye-off icon-hide" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="hint">Entre 8 e 72 caracteres.</p>
+      </div>
+
+      <div class="field">
+        <label for="confirm-password">Confirmar nova senha</label>
+        <div class="password-field">
+          <input type="password" id="confirm-password" name="confirmarSenha" autocomplete="new-password" minlength="8"
+            maxlength="72" placeholder="Repita a nova senha" required>
+          <button type="button" class="toggle-password" aria-label="Mostrar senha" aria-pressed="false">
+            <span class="icon icon--eye icon-show" aria-hidden="true"></span>
+            <span class="icon icon--eye-off icon-hide" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="reset-submit">Redefinir senha</button>
+
+      <div class="auth-secondary-actions">
+        <button type="button" class="auth-link-btn" id="resend-btn">Reenviar código</button>
+        <button type="button" class="auth-link-btn" id="change-email-btn">Usar outro e-mail</button>
+      </div>
+    </form>
+
+    <p class="auth-footer">
+      Lembrou sua senha? <a href="login.html">Voltar para o login</a>
+    </p>
+  </main>
+
+  <script src="js/recuperar-senha.js"></script>
+</body>
+
+</html>

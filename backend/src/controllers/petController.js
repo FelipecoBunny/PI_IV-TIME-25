@@ -131,10 +131,16 @@ export const listarPets = async (req, res) => {
     const pets = await db
       .collection("pets")
       .find({ donoId: new ObjectId(req.session.userId) })
-      .project({ nome: 1, especie: 1, raca: 1, dataNascimento: 1 })
+      .project({ nome: 1, especie: 1, raca: 1, dataNascimento: 1, fotoId: 1 })
       .toArray();
 
-    res.json(pets);
+    // Informa se o pet tem foto sem expor o fotoId interno do GridFS
+    res.json(
+      pets.map(({ fotoId, ...pet }) => ({
+        ...pet,
+        temFoto: Boolean(fotoId),
+      }))
+    );
   } catch (error) {
     res.status(500).json({ message: "Erro ao listar pets." });
   }

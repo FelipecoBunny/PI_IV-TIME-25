@@ -25,7 +25,8 @@ import {
   listarDocumentos,
   enviarDocumentos,
   baixarDocumento,
-  uploadMiddleware
+  uploadMiddleware,
+  excluirDocumento
 } from '../controllers/consultaController.js';
 import {
   listarVacinas,
@@ -35,7 +36,8 @@ import {
   listarDocumentosVacina,
   enviarDocumentosVacina,
   baixarDocumentoVacina,
-  uploadVacinaMiddleware
+  uploadVacinaMiddleware,
+  excluirDocumentoVacina
 } from '../controllers/vacinaController.js';
 import {
   listarMedicamentos,
@@ -69,6 +71,7 @@ router.delete('/:petId/consultas/:consultaId', requireAuth, excluirConsulta);
 router.get('/:petId/consultas/:consultaId/documentos', requireAuth, listarDocumentos);
 router.post('/:petId/consultas/:consultaId/documentos', requireAuth, uploadMiddleware, enviarDocumentos);
 router.get('/:petId/consultas/:consultaId/documentos/:docId/arquivo', requireAuth, baixarDocumento);
+router.delete('/:petId/consultas/:consultaId/documentos/:docId', requireAuth, excluirDocumento);
 
 // Vacinas e documentos
 router.get('/:petId/vacinas', requireAuth, listarVacinas);
@@ -78,6 +81,7 @@ router.delete('/:petId/vacinas/:vacinaId', requireAuth, excluirVacina);
 router.get('/:petId/vacinas/:vacinaId/documentos', requireAuth, listarDocumentosVacina);
 router.post('/:petId/vacinas/:vacinaId/documentos', requireAuth, uploadVacinaMiddleware, enviarDocumentosVacina);
 router.get('/:petId/vacinas/:vacinaId/documentos/:docId/arquivo', requireAuth, baixarDocumentoVacina);
+router.delete('/:petId/vacinas/:vacinaId/documentos/:docId', requireAuth, excluirDocumentoVacina);
 
 // Medicamentos e registro de doses
 router.get('/:petId/medicamentos', requireAuth, listarMedicamentos);

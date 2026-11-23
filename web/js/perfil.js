@@ -60,6 +60,7 @@ const deleteSubmitBtn = document.getElementById('delete-submit');
 
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2 MB
 const ALLOWED_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const pawSvg = `<span class="icon icon--paw" aria-hidden="true"></span>`;
 
 // Utilidades
 function esc(value) {
@@ -181,21 +182,37 @@ function renderizarPets(pets) {
     return;
   }
 
+  const cacheBust = Date.now();
   petsEmptyEl.hidden = true;
   petsListEl.innerHTML = pets.map((pet) => {
     const detalhes = pet.raca
       ? `${pet.especie || 'Pet'} · ${pet.raca}`
       : (pet.especie || 'Pet');
 
+    const avatarHtml = pet.temFoto
+      ? `<img class="pet-profile-item__img" src="/api/pets/${encodeURIComponent(pet._id)}/foto?v=${cacheBust}" alt="">`
+      : pawSvg;
+
     return `
       <li class="pet-profile-item">
-        <div class="pet-profile-item__info">
-          <p class="pet-profile-item__name">${esc(pet.nome)}</p>
-          <p class="pet-profile-item__meta">${esc(detalhes)}</p>
+        <div class="pet-profile-item__main">
+          <div class="pet-profile-item__avatar" aria-hidden="true">${avatarHtml}</div>
+          <div class="pet-profile-item__info">
+            <p class="pet-profile-item__name">${esc(pet.nome)}</p>
+            <p class="pet-profile-item__meta">${esc(detalhes)}</p>
+          </div>
         </div>
         <a href="pet-editar.html?petId=${encodeURIComponent(pet._id)}" class="btn btn--sm btn--outline">Editar</a>
       </li>`;
   }).join('');
+
+  // Volta para a pata se alguma foto falhar
+  petsListEl.querySelectorAll('.pet-profile-item__img').forEach((img) => {
+    img.addEventListener('error', () => {
+      const container = img.parentElement;
+      if (container) container.innerHTML = pawSvg;
+    });
+  });
 }
 
 // Botões de mostrar/ocultar senha
@@ -480,6 +497,22 @@ deleteForm.addEventListener('submit', async (event) => {
   } finally {
     deleteSubmitBtn.disabled = false;
   }
+});
+
+// Confirmação de sair
+const logoutBtn = document.getElementById('logout-btn');
+const logoutDialog = document.getElementById('logout-dialog');
+const logoutCancelBtn = document.getElementById('logout-cancel');
+
+logoutBtn.addEventListener('click', () => {
+  logoutDialog.showModal();
+  logoutCancelBtn.focus();
+});
+
+logoutCancelBtn.addEventListener('click', () => logoutDialog.close());
+
+logoutDialog.addEventListener('click', (event) => {
+  if (event.target === logoutDialog) logoutDialog.close();
 });
 
 // Carregamento

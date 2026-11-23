@@ -4,6 +4,36 @@
 */
 
 /* Topo do perfil */
+.profile-header {
+  align-items: center;
+}
+
+/* Botões Voltar e Sair empilhados à direita no desktop */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  flex: none;
+}
+
+.profile-actions .btn {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Botão Sair com destaque de perigo */
+.profile-logout {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.profile-logout:hover {
+  color: var(--color-danger-hover);
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger-hover);
+}
+
 .profile-identity {
   display: flex;
   align-items: center;
@@ -104,6 +134,40 @@
   border-bottom: 0;
 }
 
+.pet-profile-item__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pet-profile-item__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.pet-profile-item__avatar .icon {
+  width: 22px;
+  height: 22px;
+}
+
+.pet-profile-item__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .pet-profile-item__info {
   min-width: 0;
 }
@@ -148,7 +212,7 @@ a.btn--outline:hover {
 
 .btn--danger:hover {
   color: var(--color-on-primary);
-  background: var(--color-text);
+  background: var(--color-danger-hover);
 }
 
 .btn[hidden],
@@ -187,6 +251,15 @@ a.btn--outline:hover {
 @media (max-width: 760px) {
   .perfil-page .painel-side {
     order: 0;
+  }
+
+  .profile-header {
+    align-items: flex-start;
+  }
+
+  /* No mobile, Voltar e Sair ficam lado a lado */
+  .profile-actions {
+    flex-direction: row;
   }
 
   .profile-identity {

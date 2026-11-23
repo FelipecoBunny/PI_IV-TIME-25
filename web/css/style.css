@@ -131,9 +131,10 @@ a:hover {
   font-weight: 600;
   color: var(--color-on-primary);
   background: var(--color-primary);
-  border: 0;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .btn:hover {
@@ -219,4 +220,24 @@ a:hover {
 
 .icon--filter {
   --icon: url("../assets/filter.svg");
+}
+
+.icon--arrow-left {
+  --icon: url("../assets/arrow-left.svg");
+}
+
+.icon--home {
+  --icon: url("../assets/home.svg");
+}
+
+.icon--form {
+  --icon: url("../assets/form.svg");
+}
+
+.icon--needle {
+  --icon: url("../assets/needle.svg");
+}
+
+.icon--trash {
+  --icon: url("../assets/trash.svg");
 }

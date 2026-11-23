@@ -17,7 +17,9 @@ import {
   uploadProfilePhoto,
   getProfilePhoto,
   deleteProfilePhoto,
-  deleteAccount
+  deleteAccount,
+  requestPasswordReset,
+  resetPassword
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -34,6 +36,22 @@ const loginLimiter = rateLimit({
 router.post("/register", register);
 router.post("/login", loginLimiter, login);
 router.post("/logout", logout);
+// Limite de pedidos e tentativas de recuperação de senha
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { message: "Muitas solicitações de recuperação. Aguarde alguns minutos." }
+});
+
+const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  skipSuccessfulRequests: true,
+  message: { message: "Muitas tentativas incorretas. Tente novamente mais tarde." }
+});
+
+router.post("/forgot-password", forgotPasswordLimiter, requestPasswordReset);
+router.post("/reset-password", resetPasswordLimiter, resetPassword);
 router.get("/me", requireAuth, getMe);
 // Limite de tentativas para ações protegidas por senha
 const passwordActionLimiter = rateLimit({

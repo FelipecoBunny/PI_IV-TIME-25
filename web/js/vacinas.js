@@ -9,6 +9,7 @@ const pawSvg = `<span class="icon icon--paw" aria-hidden="true"></span>`;
 const calendarSvg = `<span class="icon icon--calendar card__icon" aria-hidden="true"></span>`;
 const clockSvg = `<span class="icon icon--clock card__icon" aria-hidden="true"></span>`;
 const alertSvg = `<span class="icon icon--alert card__icon" aria-hidden="true"></span>`;
+const trashSvg = `<span class="icon icon--trash" aria-hidden="true"></span>`;
 
 // Elementos
 const loadingState = document.getElementById('loading-state');
@@ -253,11 +254,18 @@ async function carregarDocumentos() {
     const docs = await fetchAPI(docsEndpoint());
 
     docList.innerHTML = docs.map((d) => {
-      const ehPdf = /\.pdf$/i.test(d.nome || '');
+      const ehPdf = d.tipo === 'application/pdf' || /\.pdf$/i.test(d.nome || '');
       return `
       <li class="doc-item">
-        <a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">${esc(d.nome)}</a>
-        <span class="doc-item__type">${ehPdf ? 'PDF' : 'Imagem'}</span>
+        <a class="doc-item__link" href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">${esc(d.nome)}</a>
+        <div class="doc-item__meta">
+          <span class="doc-item__type">${ehPdf ? 'PDF' : 'Imagem'}</span>
+          <button type="button" class="doc-item__delete" data-action="excluir-doc"
+            data-doc-id="${esc(d._id)}" data-doc-name="${esc(d.nome)}"
+            aria-label="Excluir ${esc(d.nome)}" title="Excluir documento">
+            ${trashSvg}
+          </button>
+        </div>
       </li>`;
     }).join('');
 
@@ -269,6 +277,40 @@ async function carregarDocumentos() {
     }
   }
 }
+
+docList.addEventListener('click', async (event) => {
+  const btn = event.target.closest('[data-action="excluir-doc"]');
+  if (!btn || !btn.dataset.docId) return;
+
+  const nome = btn.dataset.docName || 'este documento';
+  if (!window.confirm(`Deseja realmente excluir "${nome}"?`)) return;
+
+  docError.hidden = true;
+  btn.disabled = true;
+  try {
+    const response = await fetch(`${docsEndpoint()}/${encodeURIComponent(btn.dataset.docId)}`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      showDocError(data.message || 'Erro ao excluir o documento.');
+      return;
+    }
+
+    await carregarDocumentos();
+  } catch {
+    showDocError('Erro de comunicação com o servidor.');
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 document.addEventListener('click', (event) => {
   const btn = event.target.closest('[data-action="documentos"]');
@@ -714,17 +756,56 @@ async function carregarVacinasDoPet(petId) {
   }
 }
 
+// Imagem do Tutor
+function renderizarAvatarTutor(user) {
+  const link = document.getElementById('tutor-avatar');
+  const img = document.getElementById('tutor-avatar-img');
+  const initialsEl = document.getElementById('tutor-avatar-initials');
+  if (!link || !img || !initialsEl) return;
+
+  const partes = String(user?.name || '').trim().split(/\s+/).filter(Boolean);
+  const iniciais = partes.length === 0
+    ? '?'
+    : partes.length === 1
+      ? partes[0].slice(0, 2).toUpperCase()
+      : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+
+  initialsEl.textContent = iniciais;
+  const rotulo = user?.name ? `Perfil de ${user.name}` : 'Meu perfil';
+  link.title = rotulo;
+  link.setAttribute('aria-label', rotulo);
+
+  img.addEventListener('error', () => {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  });
+
+  if (user?.temFoto) {
+    img.src = `/api/auth/me/foto?v=${Date.now()}`;
+    img.hidden = false;
+    initialsEl.hidden = true;
+  } else {
+    img.hidden = true;
+    initialsEl.hidden = false;
+  }
+}
+
 async function inicializarAplicacao() {
   try {
-    const pets = await fetchAPI('/api/pets');
+    // Busca pets e dados do tutor
+    const [pets, user] = await Promise.all([
+      fetchAPI('/api/pets'),
+      fetchAPI('/api/auth/me').catch(() => null),
+    ]);
 
+    // Sem pets
     if (pets.length === 0) {
-      window.location.href = 'cadastro-pet.html';
+      window.location.href = "cadastro-pet.html";
       return;
     }
 
-    // Seletor só aparece com mais de um pet
-    petSwitcherContainer.style.display = pets.length === 1 ? 'none' : 'flex';
+    // Caixa dos Pets
+    renderizarAvatarTutor(user);
     petListEl.innerHTML = '';
 
     // Mesmo pet ativo da tela inicial e de consultas
@@ -734,6 +815,7 @@ async function inicializarAplicacao() {
       sessionStorage.setItem('activePetId', activePetId);
     }
 
+    const cacheBust = Date.now();
     pets.forEach((pet) => {
       const isActive = pet._id === activePetId;
       const btn = document.createElement('button');
@@ -742,7 +824,20 @@ async function inicializarAplicacao() {
       btn.title = pet.nome;
       btn.setAttribute('aria-label', pet.nome);
       btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-      btn.innerHTML = pawSvg;
+
+      // Usa a foto do pet quando existir, com fallback para o ícone de patinha
+      if (pet.temFoto) {
+        const img = document.createElement('img');
+        img.className = 'pet-avatar__img';
+        img.src = `/api/pets/${encodeURIComponent(pet._id)}/foto?v=${cacheBust}`;
+        img.alt = '';
+        img.addEventListener('error', () => {
+          btn.innerHTML = pawSvg;
+        });
+        btn.appendChild(img);
+      } else {
+        btn.innerHTML = pawSvg;
+      }
 
       btn.addEventListener('click', () => {
         if (pet._id === sessionStorage.getItem('activePetId')) return;

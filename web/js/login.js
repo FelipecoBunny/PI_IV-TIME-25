@@ -5,6 +5,14 @@
 
 const form = document.getElementById("login-form");
 const errorBox = document.getElementById("form-error");
+const successBox = document.getElementById("form-success");
+
+// Exibe confirmação ao voltar da redefinição de senha
+if (new URLSearchParams(window.location.search).get("reset") === "1" && successBox) {
+  successBox.textContent = "Senha redefinida com sucesso. Entre com sua nova senha.";
+  successBox.hidden = false;
+  window.history.replaceState({}, "", "login.html");
+}
 
 function showError(message) {
   errorBox.textContent = message;
@@ -14,6 +22,7 @@ function showError(message) {
 form.addEventListener("submit", async function (event) {
   event.preventDefault();
   errorBox.hidden = true;
+  if (successBox) successBox.hidden = true;
 
   const email = form.email.value.trim();
   const password = form.password.value;

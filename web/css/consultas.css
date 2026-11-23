@@ -3,54 +3,7 @@
 * RA: 25009935
 */
 
-/* Cabeçalho e navegação */
-.app-header__brand {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-on-primary);
-  text-decoration: none;
-}
-
-.app-header__brand:hover {
-  color: var(--color-on-primary);
-}
-
-.app-header__brand:focus-visible,
-.app-header__link:focus-visible {
-  outline: 2px solid var(--color-on-primary);
-  outline-offset: 2px;
-}
-
-.app-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 20px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.app-header__link {
-  padding: 4px 0;
-  color: var(--color-on-primary);
-  font-size: 0.9rem;
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-}
-
-.app-header__link:hover {
-  color: var(--color-on-primary);
-  border-bottom-color: rgba(255, 255, 255, 0.6);
-}
-
-/* página atual */
-.app-header__link[aria-current="page"] {
-  font-weight: 700;
-  border-bottom-color: var(--color-on-primary);
-}
-
 /* Mensagem de erro */
-
 .error-text {
   margin: 0 0 12px;
   color: var(--color-danger);
@@ -68,13 +21,13 @@
   color: var(--color-text);
 }
 
-/* Botão escuro "Marcar consulta" (usa a cor do cabeçalho) */
+/* Botões de ação principal no topo (seguem a cor primária do app) */
 .btn--dark {
-  background: var(--color-header);
+  background: var(--color-primary);
 }
 
 .btn--dark:hover {
-  background: var(--color-text);
+  background: var(--color-primary-hover);
 }
 
 /* Botão desabilitado */
@@ -277,7 +230,8 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--color-primary);
-  border-radius: 8px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(43, 52, 64, 0.14);
 }
 
 .doc-dialog::backdrop {
@@ -301,30 +255,102 @@
 }
 
 .doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
+}
+
+.doc-list:empty {
+  display: none;
 }
 
 .doc-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 10px 12px;
   font-size: 0.9rem;
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  transition: border-color 0.15s ease;
 }
 
-.doc-item a {
+.doc-item:hover {
+  border-color: var(--color-primary-border);
+}
+
+.doc-item__link {
+  flex: 1;
   min-width: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
   overflow-wrap: anywhere;
 }
 
-.doc-item__type {
+.doc-item__link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.doc-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: none;
-  font-size: 0.8rem;
+}
+
+.doc-item__type {
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.doc-item__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.doc-item__delete .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.doc-item__delete:hover:not(:disabled) {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger-border);
+}
+
+.doc-item__delete:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.doc-item__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .doc-upload label {

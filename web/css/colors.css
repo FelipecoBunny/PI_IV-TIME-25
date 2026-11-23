@@ -4,12 +4,14 @@
 
 :root {
   /* Marca */
-  --color-primary: #B4540C;
+  --color-primary: #FA7922;
   /* botões e links principais */
-  --color-primary-hover: #98460A;
+  --color-primary-hover: #E06512;
   /* botões ao passar o mouse */
-  --color-primary-soft: #FDEBDD;
-  /* fundos suaves (destaques, cards) */
+  --color-primary-soft: #FFF6EF;
+  /* fundos sutis (destaques, cards) */
+  --color-primary-border: #FDD9C1;
+  /* bordas sutis em cards da marca */
   --color-on-primary: #FFFFFF;
   /* texto sobre a cor primária */
 
@@ -21,25 +23,32 @@
   --color-border: #D9DFE5;
   /* bordas e divisórias */
   --color-header: #5B6B7A;
-  /* barra de cabeçalho (telas internas) */
+  /* detalhes neutros */
 
   /* Texto */
   --color-text: #2B3440;
   /* texto principal */
   --color-text-muted: #5F6B76;
   /* texto secundário */
-  --color-placeholder: #8c99a5;
+  --color-placeholder: #8C99A5;
   /* texto de exemplo dentro dos campos */
 
   /* Status (Painel de Status: em dia / próximo / atrasado) */
   --color-success: #2E7D4F;
-  --color-success-soft: #E6F4EC;
+  --color-success-hover: #23623D;
+  --color-success-soft: #F1F9F4;
+  --color-success-border: #C5E4D1;
+
   --color-warning: #8A5A00;
-  --color-warning-soft: #FDF3DC;
+  --color-warning-hover: #6E4700;
+  --color-warning-soft: #FEFAF0;
+  --color-warning-border: #EED9A8;
+
   --color-danger: #B3261E;
-  --color-danger-soft: #FDECEA;
+  --color-danger-hover: #8F1D17;
+  --color-danger-soft: #FEF4F3;
+  --color-danger-border: #F2C8C5;
 
   /* Acessibilidade */
   --color-focus: #2F6FBF;
-  /* contorno de campos e botões em foco */
 }

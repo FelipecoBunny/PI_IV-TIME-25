@@ -525,3 +525,54 @@ export const baixarDocumento = async (req, res) => {
     }
   }
 };
+
+export const excluirDocumento = async (req, res) => {
+  try {
+    const { petId, consultaId, docId } = req.params;
+    if (!ObjectId.isValid(petId) || !ObjectId.isValid(consultaId) || !ObjectId.isValid(docId)) {
+      return res.status(404).json({ message: "Documento não encontrado." });
+    }
+
+    const db = getDatabase();
+    const pet = await verificarDonoPet(db, petId, req.session.userId);
+    if (!pet) {
+      return res.status(404).json({ message: "Pet não encontrado." });
+    }
+
+    const consulta = await db.collection("consultations").findOne({
+      _id: new ObjectId(consultaId),
+      petId: pet._id,
+    });
+    if (!consulta) {
+      return res.status(404).json({ message: "Consulta não encontrada." });
+    }
+
+    const doc = (consulta.documentos || []).find((d) => String(d._id) === docId);
+    if (!doc) {
+      return res.status(404).json({ message: "Documento não encontrado." });
+    }
+
+    await db.collection("consultations").updateOne(
+      { _id: consulta._id },
+      {
+        $pull: { documentos: { _id: doc._id } },
+        $set: { atualizadoEm: new Date() },
+      }
+    );
+
+    if (doc.fileId) {
+      const bucket = new GridFSBucket(db, { bucketName: BUCKET_NAME });
+      try {
+        const fileId = doc.fileId instanceof ObjectId ? doc.fileId : new ObjectId(doc.fileId);
+        await bucket.delete(fileId);
+      } catch {
+        // Ignora caso o arquivo já tenha sido removido do GridFS
+      }
+    }
+
+    res.json({ message: "Documento excluído com sucesso." });
+  } catch (error) {
+    console.error("[ConsultaController] Erro ao excluir documento:", error);
+    res.status(500).json({ message: "Erro interno ao excluir documento." });
+  }
+};

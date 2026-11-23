@@ -502,3 +502,54 @@ export const baixarDocumentoVacina = async (req, res) => {
     }
   }
 };
+
+export const excluirDocumentoVacina = async (req, res) => {
+  try {
+    const { petId, vacinaId, docId } = req.params;
+    if (!ObjectId.isValid(petId) || !ObjectId.isValid(vacinaId) || !ObjectId.isValid(docId)) {
+      return res.status(404).json({ message: "Documento não encontrado." });
+    }
+
+    const db = getDatabase();
+    const pet = await verificarDonoPet(db, petId, req.session.userId);
+    if (!pet) {
+      return res.status(404).json({ message: "Pet não encontrado." });
+    }
+
+    const vacina = await db.collection("vaccines").findOne({
+      _id: new ObjectId(vacinaId),
+      petId: pet._id,
+    });
+    if (!vacina) {
+      return res.status(404).json({ message: "Vacina não encontrada." });
+    }
+
+    const doc = (vacina.documentos || []).find((d) => String(d._id) === docId);
+    if (!doc) {
+      return res.status(404).json({ message: "Documento não encontrado." });
+    }
+
+    await db.collection("vaccines").updateOne(
+      { _id: vacina._id },
+      {
+        $pull: { documentos: { _id: doc._id } },
+        $set: { atualizadoEm: new Date() },
+      }
+    );
+
+    if (doc.fileId) {
+      const bucket = new GridFSBucket(db, { bucketName: BUCKET_NAME });
+      try {
+        const fileId = doc.fileId instanceof ObjectId ? doc.fileId : new ObjectId(doc.fileId);
+        await bucket.delete(fileId);
+      } catch {
+        // Ignora caso o arquivo já tenha sido removido do GridFS
+      }
+    }
+
+    res.json({ message: "Documento excluído com sucesso." });
+  } catch (error) {
+    console.error("[VacinaController] Erro ao excluir documento:", error);
+    res.status(500).json({ message: "Erro interno ao excluir documento." });
+  }
+};
