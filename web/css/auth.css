@@ -63,12 +63,6 @@
   font-weight: 600;
 }
 
-.alert--success {
-  color: var(--color-success);
-  background: var(--color-success-soft);
-  border-color: var(--color-success-border);
-}
-
 .code-input {
   font-size: 1.25rem;
   font-weight: 700;
@@ -109,4 +103,8 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+.auth-step-hint {
+  margin: 0 0 16px;
 }

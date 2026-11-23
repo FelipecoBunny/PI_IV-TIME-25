@@ -21,7 +21,7 @@
   color: var(--color-text);
 }
 
-/* Botões de ação principal no topo (seguem a cor primária do app) */
+/* Botões de ação principal no topo */
 .btn--dark {
   background: var(--color-primary);
 }
@@ -221,7 +221,7 @@
   }
 }
 
-/* Documentos da consulta */
+/* Diálogo de documentos e utilitários compartilhados do painel */
 .doc-dialog {
   width: calc(100% - 32px);
   max-width: 480px;

@@ -142,6 +142,7 @@ export const listarPets = async (req, res) => {
       }))
     );
   } catch (error) {
+    console.error("[PetController] Erro ao listar pets:", error);
     res.status(500).json({ message: "Erro ao listar pets." });
   }
 };
@@ -178,7 +179,7 @@ export const getDashboard = async (req, res) => {
 
     res.json(painel);
   } catch (error) {
-    console.error("Erro no dashboard:", error);
+    console.error("[PetController] Erro no dashboard:", error);
     if (error.code === "ECONNREFUSED") {
       return res.status(503).json({ message: "Servidor Java de cálculo indisponível na porta 4000." });
     }

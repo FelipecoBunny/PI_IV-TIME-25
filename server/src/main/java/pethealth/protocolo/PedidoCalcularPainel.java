@@ -17,6 +17,7 @@ public class PedidoCalcularPainel extends Comunicado {
 
     public static final String TIPO = "PEDIDO_CALCULAR_PAINEL";
 
+    // Nomes dos campos seguem o JSON enviado pelo Node
     private PetInfo pet;
     private List<VacinaInfo> vaccines;
     private List<MedicamentoInfo> medications;

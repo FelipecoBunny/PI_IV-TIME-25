@@ -67,6 +67,7 @@ function esc(value) {
 }
 
 function getHojeISO() {
+  // O locale en-CA formata a data local diretamente como YYYY-MM-DD
   return new Date().toLocaleDateString('en-CA');
 }
 

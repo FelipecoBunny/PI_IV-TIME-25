@@ -25,7 +25,6 @@ const actionError = document.getElementById('action-error');
 // Topo e seletor de pets
 const petSubtitle = document.getElementById('pet-subtitle');
 const addMedBtn = document.getElementById('add-med-btn');
-const petSwitcherContainer = document.getElementById('pet-switcher-container');
 const petListEl = document.getElementById('pet-list');
 
 // Listas da página
@@ -68,7 +67,7 @@ let medicamentosCache = new Map();
 let hojeAtualISO = '';
 let editingMedId = null;
 
-// ---------- Utilidades ----------
+// Utilidades
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -176,7 +175,7 @@ function falhaAoCarregar() {
   errorState.hidden = false;
 }
 
-// ---------- Renderização ----------
+// Renderização
 function renderizarMedicamentos(data) {
   limparErroAcao();
   hojeAtualISO = data.hoje || getHojeLocalISO();
@@ -287,7 +286,7 @@ function renderizarMedicamentos(data) {
   savedEmpty.hidden = medicamentos.length > 0;
 }
 
-// ---------- Campos dinâmicos do diálogo ----------
+// Campos dinâmicos do diálogo
 function atualizarBotaoAddHorario() {
   const total = horariosListEl.querySelectorAll('.med-horario-row').length;
   addHorarioBtn.disabled = total >= MAX_HORARIOS;
@@ -362,7 +361,7 @@ function obterDiasSelecionados() {
   return selecionados.sort((a, b) => a - b);
 }
 
-// ---------- Abertura do diálogo (Cadastrar e Editar) ----------
+// Abertura do diálogo (Cadastrar e Editar)
 function abrirModalCadastro() {
   editingMedId = null;
   limparErrosFormulario();
@@ -438,7 +437,7 @@ function abrirModalEdicao(medId) {
   nomeInput.focus();
 }
 
-// ---------- Eventos do diálogo ----------
+// Eventos do diálogo
 incluirSalCheckbox.addEventListener('change', () => {
   atualizarSecaoSal();
   if (incluirSalCheckbox.checked) principioInput.focus();
@@ -482,7 +481,7 @@ medDialog.addEventListener('click', (event) => {
   if (event.target === medDialog) medDialog.close();
 });
 
-// ---------- Salvar medicamento (POST / PUT) ----------
+// Salvar medicamento (POST / PUT)
 medForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   limparErrosFormulario();
@@ -620,7 +619,7 @@ medForm.addEventListener('submit', async (event) => {
   }
 });
 
-// ---------- Excluir medicamento ----------
+// Excluir medicamento
 medDeleteBtn.addEventListener('click', async () => {
   if (!editingMedId) return;
   if (!window.confirm('Deseja realmente excluir este medicamento e seu histórico de doses?')) return;
@@ -660,7 +659,7 @@ medDeleteBtn.addEventListener('click', async () => {
   }
 });
 
-// ---------- Ações nos cards (doses, edição e arquivamento) ----------
+// Ações nos cards (doses, edição e arquivamento)
 async function registrarDoseTomada(card, btn) {
   limparErroAcao();
   const petId = sessionStorage.getItem('activePetId');

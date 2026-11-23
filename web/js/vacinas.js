@@ -1,7 +1,6 @@
 /*
 * Autoria: Giovanni Joseppe Bozelli
 * RA: 25006837
-* Integração e Lógica: Felipe Nasser Coelho Moussa | RA: 25004922
 */
 
 // Ícones personalizados
@@ -21,7 +20,6 @@ const petSubtitle = document.getElementById('pet-subtitle');
 const resumoEl = document.getElementById('resumo');
 const registerBtn = document.getElementById('register-btn');
 const petListEl = document.getElementById('pet-list');
-const petSwitcherContainer = document.getElementById('pet-switcher-container');
 
 const vacinaList = document.getElementById('vacina-list');
 const vacinasEmpty = document.getElementById('vacinas-empty');
@@ -72,7 +70,7 @@ function tituloComDose(titulo, dose) {
 }
 
 async function fetchAPI(endpoint) {
-  const response = await fetch(endpoint);
+  const response = await fetch(endpoint, { credentials: 'same-origin' });
   if (response.status === 401) {
     window.location.href = 'login.html';
     throw new Error('Não autorizado');
@@ -127,7 +125,6 @@ function renderizarResumo(aplicadas, proximas) {
 }
 
 function renderizarVacinas(data) {
-  document.querySelectorAll('[data-exemplo]').forEach((el) => el.remove());
 
   const aplicadas = Array.isArray(data.aplicadas) ? data.aplicadas : [];
   const proximas = Array.isArray(data.proximas) ? data.proximas : [];

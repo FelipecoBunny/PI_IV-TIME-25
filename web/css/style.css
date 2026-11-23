@@ -157,6 +157,13 @@ a:hover {
   border-radius: 6px;
 }
 
+/* Mensagem de sucesso compartilhada */
+.alert--success {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+  border-color: var(--color-success-border);
+}
+
 /* Ícones personalizados */
 .icon {
   display: inline-block;

@@ -94,6 +94,7 @@ export const uploadMiddleware = (req, res, next) => {
   });
 };
 
+// Consultas
 export const listarConsultas = async (req, res) => {
   try {
     const db = getDatabase();
@@ -107,6 +108,7 @@ export const listarConsultas = async (req, res) => {
       .find({ petId: pet._id })
       .toArray();
 
+    // Passa agendadas vencidas para realizadas
     const agoraSP = getAgoraSP();
     const vencidasIds = todas
       .filter((c) => c.status === "agendada" && jaPassou(c.data, c.horario, agoraSP))
@@ -163,7 +165,6 @@ export const listarConsultas = async (req, res) => {
       local: c.local || "",
       medico: c.veterinario || "",
     }));
-
 
     res.json({
       pet: { nome: pet.nome },
@@ -363,6 +364,7 @@ export const excluirConsulta = async (req, res) => {
   }
 };
 
+// Documentos no GridFS
 export const listarDocumentos = async (req, res) => {
   try {
     const { petId, consultaId } = req.params;

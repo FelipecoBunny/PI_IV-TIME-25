@@ -1,6 +1,5 @@
 /*
 * Autoria: Mateus de Souza Campos | RA: 25009935
-* Integração e Lógica: Felipe Nasser Coelho Moussa | RA: 25004922
 */
 
 // Ícones personalizados
@@ -19,7 +18,6 @@ const painelContent = document.getElementById('painel-content');
 const dateEl = document.getElementById('today-date');
 const petNameEl = document.getElementById('pet-name');
 const petListEl = document.getElementById('pet-list');
-const petSwitcherContainer = document.getElementById('pet-switcher-container');
 
 // Listas e Empty States
 const sections = {
@@ -62,13 +60,13 @@ function esc(value) {
 
 // Wrapper API
 async function fetchAPI(endpoint) {
-  const response = await fetch(endpoint);
+  const response = await fetch(endpoint, { credentials: 'same-origin' });
   if (response.status === 401) {
-    window.location.href = "login.html";
-    throw new Error("Não autorizado");
+    window.location.href = 'login.html';
+    throw new Error('Não autorizado');
   }
   if (!response.ok) {
-    throw new Error("Erro na requisição");
+    throw new Error('Erro na requisição');
   }
   return response.json();
 }
@@ -1483,6 +1481,11 @@ async function inicializarAplicacao() {
       errorState.hidden = false;
     }
   }
+}
+
+const retryBtn = document.getElementById('retry-btn');
+if (retryBtn) {
+  retryBtn.addEventListener('click', () => location.reload());
 }
 
 inicializarAplicacao();

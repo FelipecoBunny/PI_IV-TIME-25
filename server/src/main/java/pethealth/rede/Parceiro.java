@@ -37,6 +37,7 @@ public class Parceiro {
         this.transmissor = transmissor;
     }
 
+    // Envia comunicado em JSON
     public void receba(Comunicado x) throws Exception {
         try {
             String json = SerializadorComunicado.paraJson(x);
@@ -49,6 +50,7 @@ public class Parceiro {
         }
     }
 
+    // Lê o próximo comunicado sem consumir
     public Comunicado espie() throws Exception {
         try {
             this.mutEx.acquireUninterruptibly();
@@ -64,6 +66,7 @@ public class Parceiro {
         }
     }
 
+    // Entrega e limpa o comunicado em espera
     public Comunicado envie() throws Exception {
         try {
             if (this.proximoComunicado == null) {

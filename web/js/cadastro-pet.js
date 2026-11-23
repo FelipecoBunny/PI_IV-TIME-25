@@ -69,9 +69,11 @@ form.addEventListener("submit", async function (event) {
   try {
     const breed = document.getElementById("breed").value.trim();
 
+    // Envia dados textuais do pet (foto é tratada via endpoint próprio quando habilitado)
     const response = await fetch("/api/pets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
       body: JSON.stringify({
         nome: petName,
         especie: species,

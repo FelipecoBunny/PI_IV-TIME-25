@@ -51,8 +51,10 @@ form.addEventListener("submit", async function (event) {
       return;
     }
 
-    // Quantos pets
-    const petsResponse = await fetch("/api/pets");
+    // Consulta pets do usuário autenticado
+    const petsResponse = await fetch("/api/pets", {
+      credentials: "same-origin"
+    });
 
     if (petsResponse.ok) {
       const pets = await petsResponse.json();
@@ -69,6 +71,4 @@ form.addEventListener("submit", async function (event) {
   } catch (error) {
     showError("Erro de comunicação com o servidor.");
   }
-
-  console.log("Formulário válido. Pronto para enviar ao backend:", { email });
 });
